@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ChevronLeft, ChevronRight, Edit, Save, Settings, Users } from "lucide-react"
+import { ChevronLeft, ChevronRight, Edit, Save, Settings, Users, Pencil, CalendarPlus2 } from "lucide-react"
 
 import { ManageCourseDialog } from "@/components/manage-course-dialog"
 import { useCourses } from "@/lib/data"
@@ -189,7 +189,7 @@ export function CalendarView() {
                 <span className="sr-only">設置</span>
               </Button>
               <Button variant="outline" size="icon" onClick={() => setEditMode(true)} title="編輯課程">
-                <Edit className="h-4 w-4" />
+                <CalendarPlus2 className="h-4 w-4" />
                 <span className="sr-only">編輯課程</span>
               </Button>
             </>
