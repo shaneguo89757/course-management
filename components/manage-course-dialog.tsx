@@ -93,6 +93,7 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-8"
+                autoFocus={false}
               />
             </div>
 
