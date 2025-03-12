@@ -196,7 +196,7 @@ export function CalendarView() {
           )}
           {editMode && (
             <>
-              <Button variant="outline" onClick={cancelEdit}>
+              <Button variant="outline" onClick={cancelEdit}>{""}
                 取消
               </Button>
               <Button variant="default" onClick={saveCourseChanges}>
