@@ -320,9 +320,7 @@ export function CalendarView() {
                     </div>
                   ) : !editMode && isCurrentMonthDay ? (
                     // 無課程時顯示空白佔位，保持高度一致
-                    <div className="mt-1 h-[42px] flex items-center justify-center">
-                      
-                    </div>
+                    <div className="mt-1 h-[42px] flex items-center justify-center"></div>
                   ) : (
                     // 編輯模式或非當月日期時的空白佔位
                     <div className="mt-1 h-[42px]"></div>
