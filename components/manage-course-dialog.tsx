@@ -94,6 +94,7 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-8"
                 autoFocus={false}
+                tabIndex={-1}
               />
             </div>
 
@@ -159,7 +160,7 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
           {/* 已登記學員列表 */}
           <div className="rounded-md border">
             <div className="p-4">
-              <h3 className="font-medium">已登記學員 ({course.students.length})</h3>
+              <h2 className="font-medium">已登記學員 ({course.students.length})</h2>
             </div>
             {course.students.length === 0 ? (
               <div className="p-4 text-center text-sm text-muted-foreground">尚未有學員登記此課程</div>
