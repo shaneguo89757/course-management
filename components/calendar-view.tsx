@@ -199,7 +199,7 @@ export function CalendarView() {
               <Button variant="outline" onClick={cancelEdit}>
                 取消
               </Button>
-              <Button variant="primary" onClick={saveCourseChanges}>
+              <Button variant="default" onClick={saveCourseChanges}>
                 <Save className="h-4 w-4 mr-2" />
                 保存
               </Button>
