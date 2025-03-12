@@ -263,6 +263,7 @@ export function CalendarView() {
           const dateString = formatDate(day)
           const isSelected = selectedDates.has(dateString)
           const hasStudents = courseHasStudents(dateString)
+          const isBeforeThenToday = day < new Date()
 
           return (
             <Card
@@ -271,6 +272,7 @@ export function CalendarView() {
                 "h-[110px] transition-colors", // 固定高度，確保所有格子大小一致
                 !isCurrentMonthDay && "opacity-40",
                 isToday(day) && "border-primary",
+                !isToday(day) && isBeforeThenToday && "opacity-40",
                 editMode && isSelected && "bg-blue-100 dark:bg-blue-900",
                 editMode && isCurrentMonthDay && "cursor-pointer hover:border-blue-300",
                 editMode && hasStudents && isSelected && "bg-blue-200 dark:bg-blue-800",
