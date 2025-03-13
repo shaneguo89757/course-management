@@ -71,24 +71,35 @@ export function ShadcnCalendarView() {
               <Calendar
                 mode="single"
                 numberOfMonths={3}
-                selected={date}
-                onSelect={(day) => setDate(day as Date)}
+                selected={selectedDate}
+                onSelect={(day) => {
+                  if (day) {
+                    setDate(day)
+                    setSelectedDate(day)
+                  }
+                }}
+                defaultMonth={date}
+                fromDate={new Date(2024, 0, 1)}
                 className="rounded-md border"
                 showOutsideDays={false}
                 locale={zhTW}
                 components={{
                   Day: (props: DayProps) => {
                     const { date: day, displayMonth } = props
-                    if (!day) {
+                    if (!day || !isSameMonth(day, displayMonth)) {
                       return null
                     }
 
                     const course = getCourseForDate(day)
-                    const isSelected = date ? isSameDay(day, date) : false
+                    const isSelected = selectedDate ? isSameDay(day, selectedDate) : false
                     const isBeforeThenToday = day < new Date()
 
                     return (
                       <div
+                        onClick={() => {
+                          setDate(day)
+                          setSelectedDate(day)
+                        }}
                         className={cn(
                           // 基礎樣式
                           "relative flex h-9 w-9 items-center justify-center p-0 font-normal rounded-md scale-95",
