@@ -52,22 +52,71 @@ export function ShadcnCalendarView() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold">{format(date, "yyyy年MM月", { locale: zhTW })}</h2>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="icon" onClick={() => setDate(subMonths(date, 1))}>
-            <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">上個月</span>
-          </Button>
-          <Button variant="outline" size="icon" onClick={() => setDate(addMonths(date, 1))}>
-            <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">下個月</span>
-          </Button>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
         <div className="md:col-span-5">
           <Card>
             <CardContent className="p-0">
+              <Calendar
+                mode="single"
+                numberOfMonths={1}
+                selected={selectedDate}
+                onSelect={(day) => {
+                  if (day) {
+                    setDate(day)
+                    setSelectedDate(day)
+                  }
+                }}
+                defaultMonth={date}
+                fromDate={new Date(2024, 0, 1)}
+                className="rounded-md border md:hidden"
+                showOutsideDays={false}
+                locale={zhTW}
+                components={{
+                  Day: (props: DayProps) => {
+                    const { date: day, displayMonth } = props
+                    if (!day || !isSameMonth(day, displayMonth)) {
+                      return null
+                    }
+
+                    const course = getCourseForDate(day)
+                    const isSelected = selectedDate ? isSameDay(day, selectedDate) : false
+                    const isBeforeThenToday = day < new Date()
+
+                    return (
+                      <div
+                        onClick={() => {
+                          setDate(day)
+                          setSelectedDate(day)
+                        }}
+                        className={cn(
+                          // 基礎樣式
+                          "relative flex h-9 w-9 items-center justify-center p-0 font-normal rounded-md scale-95",
+                          // 添加 hover 效果，改為灰色背景
+                          "transition-all duration-200 ease-in-out hover:scale-100 hover:shadow-md hover:bg-gray-100",
+                          // 如果有課程，添加淺藍色背景
+                          course && "bg-blue-100 text-blue-600 hover:bg-gray-100",
+                          // 如果是選中的日期
+                          isSelected && "bg-primary text-primary-foreground hover:bg-primary/90",
+                          // 如果是過去的日期
+                          !isSelected && isBeforeThenToday && "opacity-40",
+                        )}
+                      >
+                        {day.getDate()}
+                        {course && (
+                          <div className="absolute bottom-1 left-0 right-0 flex justify-center">
+                            <Badge variant="outline" className="h-1.5 w-1.5 rounded-full p-0 bg-blue-500" />
+                          </div>
+                        )}
+                      </div>
+                    )
+                  }
+                }}
+                modifiersClassNames={{
+                  today: "bg-accent text-accent-foreground",
+                }}
+              />
               <Calendar
                 mode="single"
                 numberOfMonths={3}
@@ -80,7 +129,7 @@ export function ShadcnCalendarView() {
                 }}
                 defaultMonth={date}
                 fromDate={new Date(2024, 0, 1)}
-                className="rounded-md border"
+                className="rounded-md border hidden md:block"
                 showOutsideDays={false}
                 locale={zhTW}
                 components={{
