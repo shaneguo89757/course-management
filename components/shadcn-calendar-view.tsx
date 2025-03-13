@@ -71,6 +71,21 @@ export function ShadcnCalendarView() {
     return courses.filter((course) => !course.closed).map((course) => new Date(course.date))
   }
 
+  // 獲取所有課程日期
+  const courseDates = courses
+    .filter(course => !course.closed)
+    .map(course => new Date(course.date))
+
+  // 獲取已滿的課程日期
+  const fullCourseDates = courses
+    .filter(course => !course.closed && course.students.length >= 4) // 假設 4 人為滿班
+    .map(course => new Date(course.date))
+
+  // 獲取尚有空位的課程日期
+  const availableCourseDates = courses
+    .filter(course => !course.closed && course.students.length < 4)
+    .map(course => new Date(course.date))
+
   // 當前選中日期的課程
   const selectedCourse = getCourseForDate(selectedDate)
 
@@ -83,67 +98,100 @@ export function ShadcnCalendarView() {
       <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
         <div className="md:col-span-5">
           <Card>
-            <CardContent className="p-0">
-              <Calendar
-                mode="single"
-                numberOfMonths={numberOfMonths}
-                selected={selectedDate}
-                onSelect={(day) => {
-                  if (day) {
-                    setDate(day)
-                    setSelectedDate(day)
-                  }
-                }}
-                defaultMonth={date}
-                fromDate={new Date(2024, 0, 1)}
-                className="rounded-md border"
-                showOutsideDays={false}
-                locale={zhTW}
-                components={{
-                  Day: (props: DayProps) => {
-                    const { date: day, displayMonth } = props
-                    if (!day || !isSameMonth(day, displayMonth)) {
-                      return null
+            <CardContent className="w-auto p-0 flex justify-center">
+                <Calendar
+                  className="rounded-md border-0"
+                  mode="single"
+                  numberOfMonths={numberOfMonths}
+                  selected={selectedDate}
+                  onSelect={(day) => {
+                    if (day) {
+                      setDate(day)
+                      setSelectedDate(day)
                     }
+                  }}
+                  defaultMonth={date}
+                  fromDate={new Date(2024, 0, 1)}
+                  showOutsideDays={false}
+                  locale={zhTW}
+                  components={{
+                    Day: (props: DayProps) => {
+                      const { date: day, displayMonth } = props
+                      if (!day || !isSameMonth(day, displayMonth)) {
+                        return null
+                      }
 
-                    const course = getCourseForDate(day)
-                    const isSelected = selectedDate ? isSameDay(day, selectedDate) : false
-                    const isBeforeThenToday = day < new Date()
+                      const course = getCourseForDate(day)
+                      const isSelected = selectedDate ? isSameDay(day, selectedDate) : false
+                      const isBeforeThenToday = day < new Date()
 
-                    return (
-                      <div
-                        onClick={() => {
-                          setDate(day)
-                          setSelectedDate(day)
-                        }}
-                        className={cn(
-                          // 基礎樣式
-                          "relative flex h-9 w-9 items-center justify-center p-0 font-normal rounded-md scale-95",
-                          // 添加 hover 效果，改為灰色背景
-                          "transition-all duration-200 ease-in-out hover:scale-100 hover:shadow-md hover:bg-gray-100",
-                          // 如果有課程，添加淺藍色背景
-                          course && "bg-blue-100 text-blue-600 hover:bg-gray-100",
-                          // 如果是選中的日期
-                          isSelected && "bg-primary text-primary-foreground hover:bg-primary/90",
-                          // 如果是過去的日期
-                          !isSelected && isBeforeThenToday && "opacity-40",
-                        )}
-                      >
-                        {day.getDate()}
-                        {course && (
-                          <div className="absolute bottom-1 left-0 right-0 flex justify-center">
-                            <Badge variant="outline" className="h-1.5 w-1.5 rounded-full p-0 bg-blue-500" />
-                          </div>
-                        )}
-                      </div>
-                    )
-                  }
-                }}
-                modifiersClassNames={{
-                  today: "bg-accent text-accent-foreground",
-                }}
-              />
-              
+                      return (
+                        <div
+                          onClick={() => {
+                            setDate(day)
+                            setSelectedDate(day)
+                          }}
+                          className={cn(
+                            // 基礎樣式
+                            "relative flex h-9 w-9 items-center justify-center p-0 font-normal rounded-md scale-95",
+                            // 添加 hover 效果，改為灰色背景
+                            "transition-all duration-200 ease-in-out hover:scale-100 hover:shadow-md hover:bg-gray-100",
+                            // 如果有課程，添加淺藍色背景
+                            course && "bg-blue-100 text-blue-600 hover:bg-gray-100",
+                            // 如果是選中的日期
+                            isSelected && "bg-primary text-primary-foreground hover:bg-primary/90",
+                            // 如果是過去的日期
+                            !isSelected && isBeforeThenToday && "opacity-40",
+                            "text-lg font-medium"  // 這裡添加了文字大小和粗細
+                          )}
+                        >
+                          {day.getDate()}
+                          {course && (
+                            <div className="absolute bottom-1 left-0 right-0 flex justify-center">
+                              <Badge 
+                                variant="outline" 
+                                className={cn(
+                                  "h-1.5 w-1.5 rounded-full p-0",
+                                  course.students.length >= 4 
+                                    ? "bg-red-500"    // 課程滿人時顯示紅色
+                                    : "bg-blue-500"   // 課程未滿時顯示藍色
+                                )} 
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )
+                    }
+                  }}
+                  modifiers={{
+                    hasClass: courseDates,
+                    fullClass: fullCourseDates,
+                    availableClass: availableCourseDates,
+                    weekend: (date) => date.getDay() === 0 || date.getDay() === 6,
+                  }}
+                  modifiersStyles={{
+                    hasClass: {
+                      fontWeight: 'bold'
+                    },
+                    fullClass: {
+                      backgroundColor: '#FFE4E1',  // 淺紅色背景
+                      color: '#FF6B6B'
+                    },
+                    availableClass: {
+                      backgroundColor: '#98FB98',  // 淺綠色背景
+                      color: '#2E8B57'
+                    },
+                    weekend: {
+                      color: '#FF6B6B'  // 週末顯示紅色
+                    }
+                  }}
+                  modifiersClassNames={{
+                    hasClass: 'font-bold',
+                    fullClass: 'bg-red-100 text-red-600',
+                    availableClass: 'bg-green-100 text-green-600',
+                    weekend: 'text-red-500'
+                  }}
+                />
             </CardContent>
           </Card>
         </div>
