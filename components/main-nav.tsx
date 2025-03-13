@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Calendar, Users } from "lucide-react"
+import { Calendar, Users, CalendarRange } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -14,6 +14,11 @@ export function MainNav() {
       title: "行事曆",
       href: "/",
       icon: Calendar,
+    },
+    {
+      title: "Shadcn 行事曆",
+      href: "/shadcn-calendar",
+      icon: CalendarRange,
     },
     {
       title: "學員管理",
