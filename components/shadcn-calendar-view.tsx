@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { format, addMonths, subMonths, isSameDay, isSameMonth } from "date-fns"
 import { zhTW } from "date-fns/locale"
 import { ChevronLeft, ChevronRight, Users } from "lucide-react"
@@ -21,6 +21,32 @@ export function ShadcnCalendarView() {
   const [date, setDate] = useState<Date>(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [managingCourse, setManagingCourse] = useState<string | null>(null)
+  const [numberOfMonths, setNumberOfMonths] = useState(1)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    
+    const checkScreenSize = () => {
+      const width = window.innerWidth
+      // 根據不同寬度設定不同的月份數量
+      if (width >= 1200) {
+        setNumberOfMonths(3)        // 寬螢幕顯示 3 個月
+      } else if (width >= 992) {
+        setNumberOfMonths(2)        // 中等螢幕顯示 2 個月
+      } else {
+        setNumberOfMonths(1)        // 小螢幕顯示 1 個月
+      }
+    }
+
+    // 初始檢查
+    checkScreenSize()
+
+    // 在非手機版本時添加 resize 監聽
+    if (window.innerWidth >= 768) {
+      window.addEventListener('resize', checkScreenSize)
+      return () => window.removeEventListener('resize', checkScreenSize)
+    }
+  }, []) // 移除 numberOfMonths 依賴，因為我們只需要在組件掛載時設定監聽
 
   // 格式化日期為 YYYY-MM-DD
   const formatDate = (date: Date | undefined) => {
@@ -60,7 +86,7 @@ export function ShadcnCalendarView() {
             <CardContent className="p-0">
               <Calendar
                 mode="single"
-                numberOfMonths={1}
+                numberOfMonths={numberOfMonths}
                 selected={selectedDate}
                 onSelect={(day) => {
                   if (day) {
@@ -70,7 +96,7 @@ export function ShadcnCalendarView() {
                 }}
                 defaultMonth={date}
                 fromDate={new Date(2024, 0, 1)}
-                className="rounded-md border md:hidden"
+                className="rounded-md border"
                 showOutsideDays={false}
                 locale={zhTW}
                 components={{
@@ -117,65 +143,7 @@ export function ShadcnCalendarView() {
                   today: "bg-accent text-accent-foreground",
                 }}
               />
-              <Calendar
-                mode="single"
-                numberOfMonths={3}
-                selected={selectedDate}
-                onSelect={(day) => {
-                  if (day) {
-                    setDate(day)
-                    setSelectedDate(day)
-                  }
-                }}
-                defaultMonth={date}
-                fromDate={new Date(2024, 0, 1)}
-                className="rounded-md border hidden md:block"
-                showOutsideDays={false}
-                locale={zhTW}
-                components={{
-                  Day: (props: DayProps) => {
-                    const { date: day, displayMonth } = props
-                    if (!day || !isSameMonth(day, displayMonth)) {
-                      return null
-                    }
-
-                    const course = getCourseForDate(day)
-                    const isSelected = selectedDate ? isSameDay(day, selectedDate) : false
-                    const isBeforeThenToday = day < new Date()
-
-                    return (
-                      <div
-                        onClick={() => {
-                          setDate(day)
-                          setSelectedDate(day)
-                        }}
-                        className={cn(
-                          // 基礎樣式
-                          "relative flex h-9 w-9 items-center justify-center p-0 font-normal rounded-md scale-95",
-                          // 添加 hover 效果，改為灰色背景
-                          "transition-all duration-200 ease-in-out hover:scale-100 hover:shadow-md hover:bg-gray-100",
-                          // 如果有課程，添加淺藍色背景
-                          course && "bg-blue-100 text-blue-600 hover:bg-gray-100",
-                          // 如果是選中的日期
-                          isSelected && "bg-primary text-primary-foreground hover:bg-primary/90",
-                          // 如果是過去的日期
-                          !isSelected && isBeforeThenToday && "opacity-40",
-                        )}
-                      >
-                        {day.getDate()}
-                        {course && (
-                          <div className="absolute bottom-1 left-0 right-0 flex justify-center">
-                            <Badge variant="outline" className="h-1.5 w-1.5 rounded-full p-0 bg-blue-500" />
-                          </div>
-                        )}
-                      </div>
-                    )
-                  }
-                }}
-                modifiersClassNames={{
-                  today: "bg-accent text-accent-foreground",
-                }}
-              />
+              
             </CardContent>
           </Card>
         </div>
