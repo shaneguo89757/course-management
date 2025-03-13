@@ -88,25 +88,27 @@ export function ShadcnCalendarView() {
                     const isBeforeThenToday = day < new Date()
 
                     return (
-                      <button
-                        type="button"
+                      <div
                         className={cn(
-                          "relative flex h-9 w-9 items-center justify-center p-0 font-normal",
-                          // 如果有課程，添加背景色
-                          course && "bg-primary/10 text-primary hover:bg-primary/20",
+                          // 基礎樣式
+                          "relative flex h-9 w-9 items-center justify-center p-0 font-normal rounded-md scale-95",
+                          // 添加 hover 效果，改為灰色背景
+                          "transition-all duration-200 ease-in-out hover:scale-100 hover:shadow-md hover:bg-gray-100",
+                          // 如果有課程，添加淺藍色背景
+                          course && "bg-blue-100 text-blue-600 hover:bg-gray-100",
                           // 如果是選中的日期
                           isSelected && "bg-primary text-primary-foreground hover:bg-primary/90",
                           // 如果是過去的日期
                           !isSelected && isBeforeThenToday && "opacity-40",
                         )}
                       >
-                        <span className="relative">{day.getDate()}</span>
+                        {day.getDate()}
                         {course && (
                           <div className="absolute bottom-1 left-0 right-0 flex justify-center">
-                            <Badge variant="outline" className="h-1.5 w-1.5 rounded-full p-0 bg-primary" />
+                            <Badge variant="outline" className="h-1.5 w-1.5 rounded-full p-0 bg-blue-500" />
                           </div>
                         )}
-                      </button>
+                      </div>
                     )
                   }
                 }}
