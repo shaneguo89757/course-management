@@ -133,7 +133,7 @@ const useCourseStore = create<CourseState>((set, get) => ({
     set((state) => ({
       simplifiedAddMode: !state.simplifiedAddMode,
     })),
-  addCourse: (date, title) =>
+  addCourse: (date, title="基礎課程") =>
     set((state) => ({
       courses: [
         ...state.courses,

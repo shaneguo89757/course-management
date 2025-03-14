@@ -9,6 +9,7 @@ import { ChevronLeft, ChevronRight, Users } from "lucide-react"
 import { DayProps } from "react-day-picker"
 
 import { Calendar } from "@/components/ui/calendar"
+import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -17,7 +18,7 @@ import { useCourses } from "@/lib/data"
 import { cn } from "@/lib/utils"
 
 export function ShadcnCalendarView() {
-  const { courses } = useCourses()
+  const { courses, addCourse } = useCourses()
   const [date, setDate] = useState<Date>(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [managingCourse, setManagingCourse] = useState<string | null>(null)
@@ -231,7 +232,8 @@ export function ShadcnCalendarView() {
                   </div>
                   {selectedDate && (
                     <Button
-                    onClick={() => {/* 這裡添加你的處理函數 */}}
+                    variant="outline"
+                    onClick={() => addCourse(formatDate(selectedDate), "基礎課程")}
                     className="w-full transform transition-transform duration-200 hover:scale-[1.02] active:scale-95">
                       新增課程
                     </Button>
