@@ -112,12 +112,10 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
                     >
                       <div className="flex flex-col">
                         <span className="font-medium">{student.name}</span>
-                        {student.ig && (
                           <span className="text-xs text-muted-foreground flex items-center">
                             <Instagram className="h-3 w-3 mr-1" />
                             {student.ig}
                           </span>
-                        )}
                       </div>
                       {selectedStudentIds.includes(student.id) && <Check className="h-4 w-4 text-primary" />}
                     </div>
