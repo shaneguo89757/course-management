@@ -100,7 +100,7 @@ export function ShadcnCalendarView() {
           <Card>
             <CardContent className="w-auto p-0 flex justify-center">
                 <Calendar
-                  className="rounded-md border-0"
+                  className="rounded-md border-0 select-none"
                   mode="single"
                   numberOfMonths={numberOfMonths}
                   selected={selectedDate}
