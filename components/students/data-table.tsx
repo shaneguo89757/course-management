@@ -12,6 +12,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  type FilterFn,
 } from "@tanstack/react-table"
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -27,11 +28,31 @@ interface DataTableProps<TData, TValue> {
   onToggleStatus: (id: string) => void
 }
 
+// 自定義全局搜尋過濾器
+const globalFilterFn: FilterFn<any> = (row, columnId, value, addMeta) => {
+  // 如果沒有搜尋值，返回所有行
+  if (!value) return true
+
+  const searchValue = value.toLowerCase()
+
+  // 檢查名稱欄位
+  const name = row.getValue("name") as string
+  if (name && name.toLowerCase().includes(searchValue)) return true
+
+  // 檢查 IG 欄位
+  const ig = row.getValue("ig") as string | undefined
+  if (ig && ig.toLowerCase().includes(searchValue)) return true
+
+  // 如果都不匹配，返回 false
+  return false
+}
+
 export function DataTable<TData, TValue>({ columns, data, onEdit, onToggleStatus }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [statusFilter, setStatusFilter] = useState<string>("active")
+  const [globalFilter, setGlobalFilter] = useState<string>("")
   const isMobile = useMediaQuery("(max-width: 640px)")
 
   // 設置手機模式下的列可見性
@@ -74,14 +95,22 @@ export function DataTable<TData, TValue>({ columns, data, onEdit, onToggleStatus
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 7, // 設置每頁顯示 5 行，你可以根據需要調整這個數字
+      },
+    },
+    globalFilterFn: globalFilterFn,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
+      globalFilter,
     },
   })
 
@@ -92,12 +121,8 @@ export function DataTable<TData, TValue>({ columns, data, onEdit, onToggleStatus
         <div className="flex-grow">
           <Input
             placeholder="搜尋學員名稱或 IG 帳號..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) => {
-              const value = event.target.value
-              table.getColumn("name")?.setFilterValue(value)
-              table.getColumn("ig")?.setFilterValue(value)
-            }}
+            value={globalFilter}
+            onChange={(event) => setGlobalFilter(event.target.value)}
             className="w-full"
           />
         </div>
@@ -152,7 +177,29 @@ export function DataTable<TData, TValue>({ columns, data, onEdit, onToggleStatus
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2">
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">共 {table.getFilteredRowModel().rows.length} 位學員</div>
+        <div className="flex items-center space-x-2 hidden md:flex">
+          <span className="text-sm text-muted-foreground">每頁顯示</span>
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value))
+            }}
+          >
+          <SelectTrigger className="w-[70px]">
+            <SelectValue placeholder={table.getState().pagination.pageSize} />
+          </SelectTrigger>
+          <SelectContent>
+            {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+              <SelectItem key={pageSize} value={`${pageSize}`}>
+                {pageSize}
+              </SelectItem>
+            ))}
+          </SelectContent>
+          </Select>
+          <span className="text-sm text-muted-foreground">行</span>
+        </div>
         <div className="space-x-2">
           <Button
             variant="outline"
