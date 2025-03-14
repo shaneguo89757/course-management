@@ -213,13 +213,29 @@ export function ShadcnCalendarView() {
                       <span>{selectedCourse.students.length} 位學員</span>
                     </div>
                   </div>
-                  <Button onClick={() => handleManageCourse(selectedCourse.id)} className="w-full">
+                  <Button 
+                    onClick={() => handleManageCourse(selectedCourse.id)} 
+                    className="w-full transform transition-transform duration-200 hover:scale-[1.02] active:scale-95"
+                  >
                     管理課程
                   </Button>
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {selectedDate ? "這一天沒有課程" : "請選擇一個日期"}
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium h-6">... 要上班嗎</h3>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Users className="h-4 w-4 mr-1" />
+                      <span>{selectedDate ? "這一天沒有課程" : "請選擇一個日期"}</span>
+                    </div>
+                  </div>
+                  {selectedDate && (
+                    <Button
+                    onClick={() => {/* 這裡添加你的處理函數 */}}
+                    className="w-full transform transition-transform duration-200 hover:scale-[1.02] active:scale-95">
+                      新增課程
+                    </Button>
+                  )}
                 </div>
               )}
             </CardContent>
