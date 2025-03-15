@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Check, Instagram, PlusCircle, Search, LogOut } from "lucide-react"
+import { Check, Instagram, PlusCircle, Search, LogOut, X } from "lucide-react"
 
 import { useCourses, useStudents } from "@/lib/data"
 import { Button } from "@/components/ui/button"
@@ -78,13 +78,14 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>{course.title}</DialogTitle>
-          <DialogDescription>{formatDate(course.date)} - 管理課程學員</DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4 py-4">
+      <DialogContent className="sm:max-w-[500px] p-0">
+        <div className="pt-6 px-6">
+          <div>
+            <DialogTitle className="text-left">{course.title}</DialogTitle>
+            <DialogDescription className="text-left">{formatDate(course.date)} - 管理課程學員</DialogDescription>
+          </div>
+        </div>
+        <div className="px-6 space-y-4">
           {/* 搜尋和選擇區域 */}
           <div className="space-y-2">
             <div className="relative">
@@ -157,9 +158,10 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
               添加選中的學員 ({selectedStudentIds.length})
             </Button>
           </div>
-
+        </div>
+        <Separator className="p-0"/>
+        <div className="px-6 space-y-4">
           {/* 已登記學員列表 */}
-          
           <div className="rounded-md ">
             <div className="p-200">
             <h4 className="font-medium">已登記學員 ({course.students.length}):</h4>
@@ -173,7 +175,7 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
                     const student = getStudent(studentId)
                     return (
                       <div key={studentId}>
-                        <div className="flex items-center justify-between p-2 rounded-md hover:bg-muted">
+                        <div className="flex items-center justify-between p-1.5 rounded-md hover:bg-muted">
                           <div className="flex items-center gap-4">
                             <div className="h-8 w-1 rounded-full bg-primary/20" />
                             <div className="flex items-center gap-2">
@@ -203,7 +205,6 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
               </ScrollArea>
             )}
           </div>
-          
         </div>
       </DialogContent>
     </Dialog>
