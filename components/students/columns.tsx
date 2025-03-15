@@ -44,10 +44,10 @@ export function useStudentColumns(): ColumnDef<Student>[] {
         return (
           <div>
             <div className="font-medium">{name}</div>
-            {isMobile && ig && (
-              <div className="text-xs text-muted-foreground flex items-center mt-1">
+            {isMobile && (
+              <div className="text-xs text-muted-foreground flex items-center mt-1 min-h-[16px]">
                 <Instagram className="h-3 w-3 mr-1" />
-                {ig}
+                {ig || '\u00A0'}
               </div>
             )}
           </div>
