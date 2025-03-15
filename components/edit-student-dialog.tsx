@@ -45,7 +45,7 @@ export function EditStudentDialog({ student, open, onOpenChange }: EditStudentDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6">
         <DialogHeader>
           <DialogTitle>編輯學員</DialogTitle>
           <DialogDescription>修改學員資料</DialogDescription>

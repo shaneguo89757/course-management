@@ -78,7 +78,7 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0">
+      <DialogContent className="sm:max-w-[500px] p-0 [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6">
         <div className="pt-6 px-6">
           <div>
             <DialogTitle className="text-left">{course.title}</DialogTitle>
