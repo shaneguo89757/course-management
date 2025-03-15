@@ -5,6 +5,7 @@ import { Check, Instagram, PlusCircle, Search, LogOut, X } from "lucide-react"
 
 import { useCourses, useStudents } from "@/lib/data"
 import { Button } from "@/components/ui/button"
+import { Users } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -80,130 +81,139 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] p-0 [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6">
         <div className="pt-6 px-6">
-          <div>
-            <DialogTitle className="text-left">{course.title}</DialogTitle>
-            <DialogDescription className="text-left">{formatDate(course.date)} - 管理課程學員</DialogDescription>
-          </div>
-        </div>
-        <div className="px-6 space-y-4">
-          {/* 搜尋和選擇區域 */}
-          <div className="space-y-2">
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="搜尋學員名稱或 IG 帳號..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8"
-                autoFocus={false}
-                tabIndex={-1}
-              />
-            </div>
-
-            {availableStudents.length > 0 ? (
-              <ScrollArea className="h-[200px] border rounded-md">
-                <div className="p-2">
-                  {availableStudents.map((student, index) => (
-                    <div key={student.id}>
-                      <div
-                        className={cn(
-                          "flex items-center justify-between p-2 rounded-md cursor-pointer",
-                          selectedStudentIds.includes(student.id) ? "bg-primary/10" : "hover:bg-muted",
-                        )}
-                        onClick={() => toggleStudentSelection(student.id)}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{student.name}</span>
-                          <span className="text-xs text-muted-foreground flex items-center">
-                            <Instagram className="h-3 w-3 mr-1" />
-                            {student.ig}
-                          </span>
-                        </div>
-                        {selectedStudentIds.includes(student.id) && <Check className="h-4 w-4 text-primary" />}
-                      </div>
-                      {index < availableStudents.length - 1 && <Separator className="" />}
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            ) : (
-              <div className="text-center p-4 text-sm text-muted-foreground border rounded-md">
-                {searchTerm ? "沒有符合搜尋條件的學員" : "沒有可用的學員"}
+          <DialogHeader className="flex justify-between">
+            <DialogTitle className="text-left flex items-center gap-2">
+              <span>{course.title}</span>
+            </DialogTitle>
+            <DialogDescription className="text-left flex items-center gap-2">
+              <span>{formatDate(course.date)}  </span>
+              <div className="flex items-center">
+                <Users className="h-4 w-4 mr-1" />
+                <span>{course.students.length} 位學生上課</span>
               </div>
-            )}
-
-            {/* 已選擇的學員 */}
-            {selectedStudentIds.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {selectedStudentIds.map((id) => {
-                  const student = getStudent(id)
-                  return (
-                    <Badge key={id} variant="secondary" className="flex items-center gap-1">
-                      {student?.name}
-                      <X
-                        className="h-3 w-3 cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          toggleStudentSelection(id)
-                        }}
-                      />
-                    </Badge>
-                  )
-                })}
-              </div>
-            )}
-
-            <Button onClick={handleAddSelectedStudents} disabled={selectedStudentIds.length === 0} className="w-full">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              添加選中的學員 ({selectedStudentIds.length})
-            </Button>
-          </div>
+            </DialogDescription>
+          </DialogHeader>
         </div>
-        <Separator className="p-0"/>
-        <div className="px-6 space-y-4">
-          {/* 已登記學員列表 */}
-          <div className="rounded-md ">
-            <div className="p-200">
-            <h4 className="font-medium">已登記學員 ({course.students.length}):</h4>
-            </div>
-            {course.students.length === 0 ? (
-              <div className="p-2 text-center text-sm text-muted-foreground">尚未有學員登記此日期</div>
-            ) : (
-              <ScrollArea className="h-[200px]">
-                <div className="p-0">
-                  {course.students.map((studentId, index) => {
-                    const student = getStudent(studentId)
-                    return (
-                      <div key={studentId}>
-                        <div className="flex items-center justify-between p-1.5 rounded-md hover:bg-muted">
-                          <div className="flex items-center gap-4">
-                            <div className="h-8 w-1 rounded-full bg-primary/20" />
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{student?.name}</span>
-                              {student?.ig && (
-                                <span className="text-xs text-muted-foreground flex items-center">
-                                  <Instagram className="h-3 w-3 mr-1" />
-                                  {student.ig}
-                                </span>
-                              )}
-                            </div>
+        <div>
+          <div className="px-6 space-y-4">
+            {/* 搜尋和選擇區域 */}
+            <div className="space-y-2">
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="搜尋學員名稱或 IG 帳號..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8"
+                  autoFocus={false}
+                  tabIndex={-1}
+                />
+              </div>
+
+              {availableStudents.length > 0 ? (
+                <ScrollArea className="h-[200px] border rounded-md">
+                  <div className="p-2">
+                    {availableStudents.map((student, index) => (
+                      <div key={student.id}>
+                        <div
+                          className={cn(
+                            "flex items-center justify-between p-2 rounded-md cursor-pointer",
+                            selectedStudentIds.includes(student.id) ? "bg-primary/10" : "hover:bg-muted",
+                          )}
+                          onClick={() => toggleStudentSelection(student.id)}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{student.name}</span>
+                            <span className="text-xs text-muted-foreground flex items-center">
+                              <Instagram className="h-3 w-3 mr-1" />
+                              {student.ig}
+                            </span>
                           </div>
-                          <Button
-                            variant="secondary"
-                            className="h-8 w-8 -my-2 p-0 hover:bg-destructive/10 hover:text-destructive"
-                            onClick={() => removeStudentFromCourse(courseId, studentId)}
-                          >
-                            <LogOut className="h-4 w-4" />
-                            <span className="sr-only">移除學員</span>
-                          </Button>
+                          {selectedStudentIds.includes(student.id) && <Check className="h-4 w-4 text-primary" />}
                         </div>
-                        {index < course.students.length - 1 && <Separator className="" />}
+                        {index < availableStudents.length - 1 && <Separator className="" />}
                       </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              ) : (
+                <div className="text-center p-4 text-sm text-muted-foreground border rounded-md">
+                  {searchTerm ? "沒有符合搜尋條件的學員" : "沒有可用的學員"}
+                </div>
+              )}
+
+              {/* 已選擇的學員 */}
+              {selectedStudentIds.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedStudentIds.map((id) => {
+                    const student = getStudent(id)
+                    return (
+                      <Badge key={id} variant="secondary" className="flex items-center gap-1">
+                        {student?.name}
+                        <X
+                          className="h-3 w-3 cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleStudentSelection(id)
+                          }}
+                        />
+                      </Badge>
                     )
                   })}
                 </div>
-              </ScrollArea>
-            )}
+              )}
+
+              <Button onClick={handleAddSelectedStudents} disabled={selectedStudentIds.length === 0} className="w-full">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                添加選中的學員 ({selectedStudentIds.length})
+              </Button>
+            </div>
+          </div>
+          {/* 分隔線 */}
+          <Separator className="mt-2"/>
+
+          <div className="px-6 pb-4">
+            {/* 已登記學員列表 */}
+            <div className="rounded-md ">
+              {course.students.length === 0 ? (
+                <div className="p-2 text-center text-sm text-muted-foreground">尚未有學員登記此日期</div>
+              ) : (
+                <ScrollArea className="h-[250px]">
+                  <div className="p-0">
+                    {course.students.map((studentId, index) => {
+                      const student = getStudent(studentId)
+                      return (
+                        <div key={studentId}>
+                          <div className="flex items-center justify-between p-1.5 rounded-md hover:bg-muted">
+                            <div className="flex items-center gap-4">
+                              <div className="h-8 w-1 rounded-full bg-primary/20" />
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">{student?.name}</span>
+                                {student?.ig && (
+                                  <span className="text-xs text-muted-foreground flex items-center">
+                                    <Instagram className="h-3 w-3 mr-1" />
+                                    {student.ig}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <Button
+                              variant="secondary"
+                              className="h-8 w-8 -my-2 p-0 hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => removeStudentFromCourse(courseId, studentId)}
+                            >
+                              <LogOut className="h-4 w-4" />
+                              <span className="sr-only">移除學員</span>
+                            </Button>
+                          </div>
+                          {index < course.students.length - 1 && <Separator className="" />}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </ScrollArea>
+              )}
+            </div>
           </div>
         </div>
       </DialogContent>
