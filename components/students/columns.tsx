@@ -98,8 +98,8 @@ export function useStudentColumns(): ColumnDef<Student>[] {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>操作</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => table.options.meta?.onEdit(student)}>編輯</DropdownMenuItem>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => table.options.meta?.onEdit(student)}>編輯</DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => table.options.meta?.onToggleStatus(student.id)}
                 className={student.active ? "text-destructive" : "text-primary"}
