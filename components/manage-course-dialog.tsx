@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Check, Instagram, PlusCircle, Search, X } from "lucide-react"
+import { Check, Instagram, PlusCircle, Search, LogOut } from "lucide-react"
 
 import { useCourses, useStudents } from "@/lib/data"
 import { Button } from "@/components/ui/button"
@@ -159,43 +159,51 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
           </div>
 
           {/* 已登記學員列表 */}
-          <div className="rounded-md border">
-            <div className="p-4">
-              <h3 className="font-medium">已登記學員 ({course.students.length})</h3>
+          
+          <div className="rounded-md ">
+            <div className="p-200">
+            <h4 className="font-medium">已登記學員 ({course.students.length}):</h4>
             </div>
             {course.students.length === 0 ? (
-              <div className="p-4 text-center text-sm text-muted-foreground">尚未有學員登記此課程</div>
+              <div className="p-2 text-center text-sm text-muted-foreground">尚未有學員登記此日期</div>
             ) : (
               <ScrollArea className="h-[200px]">
-                <ul className="divide-y">
-                  {course.students.map((studentId) => {
+                <div className="p-0">
+                  {course.students.map((studentId, index) => {
                     const student = getStudent(studentId)
                     return (
-                      <li key={studentId} className="flex items-center justify-between p-4">
-                        <div className="flex items-center gap-2">
-                          <span>{student?.name}</span>
-                          {student?.ig && (
-                            <span className="text-xs text-muted-foreground flex items-center">
-                              <Instagram className="h-3 w-3 mr-1" />
-                              {student.ig}
-                            </span>
-                          )}
+                      <div key={studentId}>
+                        <div className="flex items-center justify-between p-2 rounded-md hover:bg-muted">
+                          <div className="flex items-center gap-4">
+                            <div className="h-8 w-1 rounded-full bg-primary/20" />
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{student?.name}</span>
+                              {student?.ig && (
+                                <span className="text-xs text-muted-foreground flex items-center">
+                                  <Instagram className="h-3 w-3 mr-1" />
+                                  {student.ig}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <Button
+                            variant="secondary"
+                            className="h-8 w-8 -my-2 p-0 hover:bg-destructive/10 hover:text-destructive"
+                            onClick={() => removeStudentFromCourse(courseId, studentId)}
+                          >
+                            <LogOut className="h-4 w-4" />
+                            <span className="sr-only">移除學員</span>
+                          </Button>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeStudentFromCourse(courseId, studentId)}
-                        >
-                          <X className="h-4 w-4" />
-                          <span className="sr-only">移除學員</span>
-                        </Button>
-                      </li>
+                        {index < course.students.length - 1 && <Separator className="" />}
+                      </div>
                     )
                   })}
-                </ul>
+                </div>
               </ScrollArea>
             )}
           </div>
+          
         </div>
       </DialogContent>
     </Dialog>
