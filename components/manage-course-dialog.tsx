@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 
 interface ManageCourseDialogProps {
@@ -101,23 +102,25 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
             {availableStudents.length > 0 ? (
               <ScrollArea className="h-[200px] border rounded-md">
                 <div className="p-2">
-                  {availableStudents.map((student) => (
-                    <div
-                      key={student.id}
-                      className={cn(
-                        "flex items-center justify-between p-2 rounded-md cursor-pointer",
-                        selectedStudentIds.includes(student.id) ? "bg-primary/10" : "hover:bg-muted",
-                      )}
-                      onClick={() => toggleStudentSelection(student.id)}
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-medium">{student.name}</span>
+                  {availableStudents.map((student, index) => (
+                    <div key={student.id}>
+                      <div
+                        className={cn(
+                          "flex items-center justify-between p-2 rounded-md cursor-pointer",
+                          selectedStudentIds.includes(student.id) ? "bg-primary/10" : "hover:bg-muted",
+                        )}
+                        onClick={() => toggleStudentSelection(student.id)}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{student.name}</span>
                           <span className="text-xs text-muted-foreground flex items-center">
                             <Instagram className="h-3 w-3 mr-1" />
                             {student.ig}
                           </span>
+                        </div>
+                        {selectedStudentIds.includes(student.id) && <Check className="h-4 w-4 text-primary" />}
                       </div>
-                      {selectedStudentIds.includes(student.id) && <Check className="h-4 w-4 text-primary" />}
+                      {index < availableStudents.length - 1 && <Separator className="" />}
                     </div>
                   ))}
                 </div>
@@ -169,7 +172,7 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
                     const student = getStudent(studentId)
                     return (
                       <li key={studentId} className="flex items-center justify-between p-4">
-                        <div className="flex flex-col">
+                        <div className="flex items-center gap-2">
                           <span>{student?.name}</span>
                           {student?.ig && (
                             <span className="text-xs text-muted-foreground flex items-center">
