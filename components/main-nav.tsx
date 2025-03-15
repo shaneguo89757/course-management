@@ -11,12 +11,7 @@ export function MainNav() {
 
   const navItems = [
     {
-      title: "行事曆",
-      href: "/",
-      icon: Calendar,
-    },
-    {
-      title: "Shadcn 行事曆",
+      title: "課程行事曆",
       href: "/shadcn-calendar",
       icon: CalendarRange,
     },
@@ -29,14 +24,14 @@ export function MainNav() {
 
   return (
     <nav className="border-b bg-background">
-      <div className="mx-auto flex h-16 max-w-6xl items-center px-4">
-        <div className="mr-4 hidden md:flex">
+      <div className="mx-auto flex h-16 max-w-6xl items-center px-4 justify-between">
+        <div className="mr-4">
           <Link href="/" className="flex items-center space-x-2">
             <Calendar className="h-6 w-6" />
             <span className="font-bold">課程管理系統</span>
           </Link>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 ml-auto">
           {navItems.map((item) => (
             <Link
               key={item.href}

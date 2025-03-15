@@ -34,7 +34,7 @@ export default function StudentsPage() {
 
   return (
     <DashboardShell>
-      <DashboardHeader heading="學員管理" description="管理學員資料和狀態" />
+      <DashboardHeader heading="學員管理" description="新增與管理學員資料，透過狀態改變學員 '顯示/隱藏'" />
       <div className="flex justify-end mb-4">
         <Button onClick={() => setIsAddDialogOpen(true)}>
           <PlusCircle className="mr-2 h-4 w-4" />

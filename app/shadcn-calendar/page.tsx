@@ -5,7 +5,7 @@ import { ShadcnCalendarView } from "@/components/shadcn-calendar-view"
 export default function ShadcnCalendarPage() {
   return (
     <DashboardShell>
-      <DashboardHeader heading="Shadcn 行事曆" description="使用 Shadcn/UI Calendar 組件的行事曆" />
+      <DashboardHeader heading="課程行事曆" description="透過月曆管理與紀錄開課狀況，以及課程上課學員" />
       <div className="grid gap-4">
         <ShadcnCalendarView />
       </div>
