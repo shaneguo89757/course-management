@@ -32,7 +32,7 @@ interface ManageCourseDialogProps {
 }
 
 export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCourseDialogProps) {
-  const { courses, addStudentToCourse, removeStudentFromCourse, addMultipleStudentsToCourse } = useCourses()
+  const { courses, addStudentToCourse, removeStudentFromCourse, addMultipleStudentsToCourse, closeCourse } = useCourses()
   const { students } = useStudents()
 
   const [searchTerm, setSearchTerm] = useState("")
@@ -188,7 +188,19 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
             {/* 已登記學員列表 */}
             <div className="rounded-md ">
               {course.students.length === 0 ? (
-                <div className="p-2 text-center text-sm text-muted-foreground">尚未有學員登記此日期</div>
+                <div className="">
+                  <div className="p-2 pt-2 text-center text-sm text-muted-foreground">尚未有學員登記此日期</div>
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      closeCourse(courseId)
+                      onOpenChange(false)
+                    }} 
+                    className="w-full transform transition-transform duration-200 hover:scale-[1.02] active:scale-95"
+                  >
+                    趁現在關閉課程
+                  </Button>
+                </div>
               ) : (
                 <ScrollArea className="h-[250px]">
                   <div className="p-0">
