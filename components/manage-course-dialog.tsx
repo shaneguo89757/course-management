@@ -2,6 +2,17 @@
 
 import { useState, useEffect } from "react"
 import { Check, Instagram, PlusCircle, Search, LogOut, X } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 import { useCourses, useStudents } from "@/lib/data"
 import { Button } from "@/components/ui/button"
@@ -199,14 +210,49 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
                                 )}
                               </div>
                             </div>
-                            <Button
-                              variant="secondary"
-                              className="h-8 w-8 -my-2 p-0 hover:bg-destructive/10 hover:text-destructive"
-                              onClick={() => removeStudentFromCourse(courseId, studentId)}
-                            >
-                              <LogOut className="h-4 w-4" />
-                              <span className="sr-only">移除學員</span>
-                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="secondary"
+                                  className="h-8 w-8 -my-2 p-0 hover:bg-destructive/10 hover:text-destructive"
+                                >
+                                  <LogOut className="h-4 w-4" />
+                                  <span className="sr-only">移除學員</span>
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>確認移除學員</AlertDialogTitle>
+                                  <AlertDialogDescription className="mt-3">
+                                      確定要將此學員從這堂課程中移除嗎？
+                                  </AlertDialogDescription>
+                                  {/* 移除的學生資訊元素 */}
+                                  <div className="mt-3">
+                                    <div className="flex items-center gap-4">
+                                      <div className="h-8 w-1 rounded-full bg-blue-200"/>
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium">{student?.name}</span>
+                                        {student?.ig && (
+                                          <span className="text-xs text-muted-foreground flex items-center">
+                                            <Instagram className="h-3 w-3 mr-1" />
+                                            {student.ig}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>取消</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    className="border border-destructive/10 bg-destructive/10 text-destructive hover:bg-destructive/20 hover:border-destructive/50"
+                                    onClick={() => removeStudentFromCourse(courseId, studentId)}
+                                  >
+                                    移除
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </div>
                           {index < course.students.length - 1 && <Separator className="" />}
                         </div>
