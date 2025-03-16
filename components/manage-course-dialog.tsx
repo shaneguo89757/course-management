@@ -86,11 +86,11 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
               <span>{course.title}</span>
             </DialogTitle>
             <DialogDescription className="text-left flex items-center gap-2">
-              <span>{formatDate(course.date)}  </span>
-              <div className="flex items-center">
+              <span>{formatDate(course.date)} - </span>
+              <span className="flex items-center">
                 <Users className="h-4 w-4 mr-1" />
                 <span>{course.students.length} 位學生上課</span>
-              </div>
+              </span>
             </DialogDescription>
           </DialogHeader>
         </div>
@@ -186,7 +186,9 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
                         <div key={studentId}>
                           <div className="flex items-center justify-between p-1.5 rounded-md hover:bg-muted">
                             <div className="flex items-center gap-4">
-                              <div className="h-8 w-1 rounded-full bg-primary/20" />
+                              {/* 一條垂直的狀態線 */}
+                              <div className="h-8 w-1 rounded-full bg-blue-200"/>
+
                               <div className="flex items-center gap-2">
                                 <span className="font-medium">{student?.name}</span>
                                 {student?.ig && (
