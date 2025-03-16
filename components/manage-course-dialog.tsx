@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
+import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 
 interface ManageCourseDialogProps {
   courseId: string
@@ -210,8 +211,8 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
                                 )}
                               </div>
                             </div>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
+                            <ConfirmDialog
+                              trigger={
                                 <Button
                                   variant="secondary"
                                   className="h-8 w-8 -my-2 p-0 hover:bg-destructive/10 hover:text-destructive"
@@ -219,40 +220,28 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
                                   <LogOut className="h-4 w-4" />
                                   <span className="sr-only">移除學員</span>
                                 </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>確認移除學員</AlertDialogTitle>
-                                  <AlertDialogDescription className="mt-3">
-                                      確定要將此學員從這堂課程中移除嗎？
-                                  </AlertDialogDescription>
-                                  {/* 移除的學生資訊元素 */}
-                                  <div className="mt-3">
-                                    <div className="flex items-center gap-4">
-                                      <div className="h-8 w-1 rounded-full bg-blue-200"/>
-                                      <div className="flex items-center gap-2">
-                                        <span className="font-medium">{student?.name}</span>
-                                        {student?.ig && (
-                                          <span className="text-xs text-muted-foreground flex items-center">
-                                            <Instagram className="h-3 w-3 mr-1" />
-                                            {student.ig}
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
+                              }
+                              title="確認移除學員"
+                              description="確定要將此學員從這堂課程中移除嗎？"
+                              confirmText="移除"
+                              onConfirm={() => removeStudentFromCourse(courseId, studentId)}
+                            >
+                              {/* 移除的學生資訊元素 */}
+                              <div className="mt-3">
+                                <div className="flex items-center gap-4">
+                                  <div className="h-8 w-1 rounded-full bg-blue-200"/>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium">{student?.name}</span>
+                                    {student?.ig && (
+                                      <span className="text-xs text-muted-foreground flex items-center">
+                                        <Instagram className="h-3 w-3 mr-1" />
+                                        {student.ig}
+                                      </span>
+                                    )}
                                   </div>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>取消</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    className="border border-destructive/10 bg-destructive/10 text-destructive hover:bg-destructive/20 hover:border-destructive/50"
-                                    onClick={() => removeStudentFromCourse(courseId, studentId)}
-                                  >
-                                    移除
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+                                </div>
+                              </div>
+                            </ConfirmDialog>
                           </div>
                           {index < course.students.length - 1 && <Separator className="" />}
                         </div>
