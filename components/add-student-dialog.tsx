@@ -39,7 +39,7 @@ export function AddStudentDialog({ open, onOpenChange }: AddStudentDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6">
+      <DialogContent className="w-[95%] sm:max-w-[425px] p-6 rounded-lg [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6">
         <DialogHeader>
           <DialogTitle>新增學員</DialogTitle>
           <DialogDescription>新增一位學員到系統中</DialogDescription>
@@ -63,8 +63,8 @@ export function AddStudentDialog({ open, onOpenChange }: AddStudentDialogProps) 
               <p className="text-xs text-muted-foreground">格式範例：@username</p>
             </div>
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          <DialogFooter className="gap-2">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} >
               取消
             </Button>
             <Button type="submit" disabled={!name.trim()}>

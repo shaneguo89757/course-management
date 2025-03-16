@@ -2,18 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { Check, Instagram, PlusCircle, Search, LogOut, X } from "lucide-react"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-
 import { useCourses, useStudents } from "@/lib/data"
 import { Button } from "@/components/ui/button"
 import { Users } from "lucide-react"
@@ -32,7 +20,7 @@ interface ManageCourseDialogProps {
 }
 
 export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCourseDialogProps) {
-  const { courses, addStudentToCourse, removeStudentFromCourse, addMultipleStudentsToCourse, closeCourse } = useCourses()
+  const { courses, removeStudentFromCourse, addMultipleStudentsToCourse, closeCourse } = useCourses()
   const { students } = useStudents()
 
   const [searchTerm, setSearchTerm] = useState("")
@@ -91,7 +79,7 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0 [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6">
+      <DialogContent className="w-[95%] sm:max-w-[500px] p-0 rounded-lg [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6">
         <div className="pt-6 px-6">
           <DialogHeader className="flex justify-between">
             <DialogTitle className="text-left flex items-center gap-2">
