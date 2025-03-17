@@ -61,7 +61,6 @@ export function AddCourseDialog({ date, open, onOpenChange }: AddCourseDialogPro
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="請輸入課程名稱"
-                autoFocus
               />
             </div>
           </div>

@@ -39,7 +39,10 @@ export function AddStudentDialog({ open, onOpenChange }: AddStudentDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95%] sm:max-w-[425px] p-6 rounded-lg [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6">
+      <DialogContent 
+        className="w-[95%] sm:max-w-[425px] p-6 rounded-lg [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>新增學員</DialogTitle>
           <DialogDescription>新增一位學員到系統中</DialogDescription>
@@ -53,7 +56,6 @@ export function AddStudentDialog({ open, onOpenChange }: AddStudentDialogProps) 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="請輸入學員姓名"
-                autoFocus
                 required
               />
             </div>

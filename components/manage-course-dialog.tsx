@@ -79,7 +79,10 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95%] sm:max-w-[500px] p-0 rounded-lg [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6">
+      <DialogContent 
+        className="w-[95%] sm:max-w-[500px] p-0 rounded-lg [&>button]:h-10 [&>button]:w-10 [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button>svg]:h-6 [&>button>svg]:w-6"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <div className="pt-6 px-6">
           <DialogHeader className="flex justify-between">
             <DialogTitle className="text-left flex items-center gap-2">
@@ -105,7 +108,6 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-8"
-                  autoFocus={false}
                   tabIndex={-1}
                 />
               </div>
