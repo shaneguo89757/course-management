@@ -8,14 +8,24 @@ export interface Student {
 
 export interface Course {
   id: string
-  date: string
+  date: string // YYYY-MM-DD 格式
   title: string
-  students: string[]
+  students: string[] // 學生 ID 列表
   closed: boolean
+}
+
+// 狀態介面
+export interface State {
+  students: Student[]
+  courses: Course[]
+  simplifiedAddMode: boolean
 }
 
 // 數據存儲介面
 export interface IDataStore {
+  // 訂閱方法
+  subscribe(callback: (state: State) => void): () => void
+
   // 學生相關操作
   getStudents(): Promise<Student[]>
   addStudent(name: string, ig?: string): Promise<Student>

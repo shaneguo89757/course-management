@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 
-import { useStudents } from "@/lib/data"
+import { useDataStore } from "@/lib/data"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -28,7 +28,7 @@ interface EditStudentDialogProps {
 }
 
 export function EditStudentDialog({ student, open, onOpenChange }: EditStudentDialogProps) {
-  const { updateStudent } = useStudents()
+  const { updateStudent } = useDataStore()
   const [name, setName] = useState(student.name)
   const [ig, setIg] = useState(student.ig || "")
 
