@@ -44,6 +44,8 @@
     "cmdk": "1.0.4",
     "date-fns": "latest",
     "embla-carousel-react": "8.5.1",
+    "google-auth-library": "^9.15.1",
+    "googleapis": "^146.0.0",
     "immer": "latest",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",

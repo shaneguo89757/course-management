@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { Calendar, Users, CalendarRange } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import GoogleAuthButton from "./GoogleAuthButton"
 
 export function MainNav() {
   const pathname = usePathname()
@@ -45,6 +46,9 @@ export function MainNav() {
               <span>{item.title}</span>
             </Link>
           ))}
+          <div className="ml-4">
+            <GoogleAuthButton />
+          </div>
         </div>
       </div>
     </nav>
