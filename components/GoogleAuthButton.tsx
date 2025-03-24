@@ -1,40 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { GoogleAuthService } from "@/lib/services/googleAuth"
+import { useAuth } from "@/lib/contexts/AuthContext"
 
 export default function GoogleAuthButton() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [isAuthorized, setIsAuthorized] = useState(false)
-
-  useEffect(() => {
-    checkAuthStatus()
-  }, [])
-
-  const checkAuthStatus = async () => {
-    try {
-      const authorized = await GoogleAuthService.isAuthorized()
-      setIsAuthorized(authorized)
-    } catch (error) {
-      console.error("Auth status check error:", error)
-      setIsAuthorized(false)
-    }
-  }
+  const { isAuthorized, isLoading, login, logout } = useAuth()
 
   const handleAuth = async () => {
-    try {
-      setIsLoading(true)
-      if (isAuthorized) {
-        await GoogleAuthService.logout()
-        setIsAuthorized(false)
-      } else {
-        const authUrl = await GoogleAuthService.getAuthUrl()
-        window.location.href = authUrl
-      }
-    } catch (error) {
-      console.error("Auth error:", error)
-    } finally {
-      setIsLoading(false)
+    if (isAuthorized) {
+      await logout()
+    } else {
+      await login()
     }
   }
 

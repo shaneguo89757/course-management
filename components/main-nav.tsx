@@ -6,9 +6,11 @@ import { Calendar, Users, CalendarRange } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import GoogleAuthButton from "./GoogleAuthButton"
+import { useAuth } from "@/lib/contexts/AuthContext"
 
 export function MainNav() {
   const pathname = usePathname()
+  const { isLoading } = useAuth()
 
   const navItems = [
     {
@@ -47,7 +49,7 @@ export function MainNav() {
             </Link>
           ))}
           <div className="ml-4">
-            <GoogleAuthButton />
+            {!isLoading && <GoogleAuthButton />}
           </div>
         </div>
       </div>
