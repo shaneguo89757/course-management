@@ -7,7 +7,7 @@
 - **前端框架**: Next.js 15.1.0
 - **程式語言**: TypeScript
 - **樣式解決方案**: Tailwind CSS
-- **後端服務**: Supabase
+- **資料庫**: Supabase
 - **狀態管理**: Zustand
 - **UI 組件**: 
   - Radix UI (基礎組件)
@@ -27,14 +27,12 @@
 │   ├── auth/              # 認證相關頁面
 │   ├── courses/           # 課程管理
 │   ├── dashboard/         # 儀表板
-│   ├── students/          # 學生管理
-│   └── supabase-test/     # Supabase 測試頁面
+│   └── students/          # 學生管理
 ├── components/            # 可重用 UI 組件
 ├── lib/                   # 工具函數和共享邏輯
 ├── hooks/                 # 自定義 React hooks
 ├── styles/               # 全局樣式
 ├── public/               # 靜態資源
-├── supabase/             # Supabase 配置
 └── scripts/              # 腳本文件
 ```
 
@@ -78,6 +76,21 @@
    - 優先使用 Tailwind CSS 類別
    - 遵循響應式設計原則
    - 保持一致的設計語言
+
+### Auth
+#### 登入流程
+1. 用戶點擊登入按鈕
+2. 調用 GoogleAuthService.getAuthUrl() 獲取 Google 認證 URL
+3. 重定向到 Google 登入頁面
+4. 用戶授權後重定向回應用
+5. 後端處理 OAuth code 並設置 cookie
+6. 前端更新登入狀態
+
+#### 登出流程
+1. 用戶點擊登出按鈕
+2. 調用 GoogleAuthService.logout()
+3. 清除 cookie
+4. 更新前端登入狀態
 
 ### 資料庫規範
 1. **Supabase 表結構**
