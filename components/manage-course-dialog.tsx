@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Check, Instagram, PlusCircle, Search, LogOut, X } from "lucide-react"
-import { useCourses, useStudents } from "@/lib/data"
+import { useDataStore } from "@/lib/data"
 import { Button } from "@/components/ui/button"
 import { Users } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -20,8 +20,7 @@ interface ManageCourseDialogProps {
 }
 
 export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCourseDialogProps) {
-  const { courses, removeStudentFromCourse, addMultipleStudentsToCourse, closeCourse } = useCourses()
-  const { students } = useStudents()
+  const { students, courses, removeStudentFromCourse, addMultipleStudentsToCourse, closeCourse } = useDataStore()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([])

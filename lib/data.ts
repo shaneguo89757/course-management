@@ -2,53 +2,7 @@
 
 import { create } from "zustand"
 import { v4 as uuidv4 } from "uuid"
-import { createContext } from "react"
-
-// 學生類型
-interface Student {
-  id: string
-  name: string
-  active: boolean
-  ig?: string // 新增 Instagram 帳號欄位，可選
-}
-
-// 課程類型
-interface Course {
-  id: string
-  date: string // YYYY-MM-DD 格式
-  title: string
-  students: string[] // 學生 ID 列表
-  closed: boolean
-}
-
-// 學生狀態管理
-interface StudentState {
-  students: Student[]
-  addStudent: (name: string, ig?: string) => void // 修改：添加 ig 參數
-  updateStudentName: (id: string, name: string) => void
-  updateStudentIg: (id: string, ig: string) => void // 新增：更新 ig 帳號
-  updateStudent: (id: string, data: { name?: string; ig?: string }) => void // 新增：更新學生資料
-  toggleStudentStatus: (id: string) => void
-}
-
-// 課程狀態管理
-interface CourseState {
-  courses: Course[]
-  simplifiedAddMode: boolean // 控制是否使用簡化模式添加課程
-  toggleSimplifiedAddMode: () => void // 切換簡化模式
-  addCourse: (date: string, title: string) => void
-  closeCourse: (id: string) => void
-  addStudentToCourse: (courseId: string, studentId: string) => void
-  removeStudentFromCourse: (courseId: string, studentId: string) => void
-  // 批量添加學生到課程
-  addMultipleStudentsToCourse: (courseId: string, studentIds: string[]) => void
-  // 批量處理課程的方法
-  batchUpdateCourses: (datesToAdd: string[], datesToRemove: string[]) => void
-  // 檢查日期是否有課程
-  hasCourse: (date: string) => boolean
-  // 檢查課程是否有學生
-  courseHasStudents: (date: string) => boolean
-}
+import { Student, Course, State, IDataStore } from "./types"
 
 // 初始學生數據
 const initialStudents: Student[] = [
@@ -57,7 +11,6 @@ const initialStudents: Student[] = [
   { id: "3", name: "張大山", active: true, ig: "@zhang_mountain" },
   { id: "4", name: "陳小雨", active: false, ig: "@chen_rain" },
   { id: "5", name: "林小樹", active: true, ig: "@lin_tree" },
-  // 添加更多學生以展示搜尋功能的效果
   { id: "6", name: "黃大偉", active: true, ig: "@huang_david" },
   { id: "7", name: "周小琳", active: true, ig: "@zhou_lin" },
   { id: "8", name: "吳美玲", active: true, ig: "@wu_beauty" },
@@ -90,103 +43,166 @@ const initialCourses: Course[] = [
   },
 ]
 
-// 創建學生狀態管理
-const useStudentStore = create<StudentState>((set) => ({
+// 創建 Zustand store
+const useStore = create<State>((set, get) => ({
   students: initialStudents,
-  addStudent: (name, ig) =>
-    set((state) => ({
-      students: [
-        ...state.students,
-        {
-          id: uuidv4(),
-          name,
-          active: true,
-          ig, // 添加 ig 欄位
-        },
-      ],
-    })),
-  updateStudentName: (id, name) =>
-    set((state) => ({
-      students: state.students.map((student) => (student.id === id ? { ...student, name } : student)),
-    })),
-  updateStudentIg: (id, ig) =>
-    set((state) => ({
-      students: state.students.map((student) => (student.id === id ? { ...student, ig } : student)),
-    })),
-  updateStudent: (id, data) =>
-    set((state) => ({
-      students: state.students.map((student) => (student.id === id ? { ...student, ...data } : student)),
-    })),
-  toggleStudentStatus: (id) =>
-    set((state) => ({
-      students: state.students.map((student) =>
-        student.id === id ? { ...student, active: !student.active } : student,
-      ),
-    })),
+  courses: initialCourses,
+  simplifiedAddMode: true,
 }))
 
-// 創建課程狀態管理
-const useCourseStore = create<CourseState>((set, get) => ({
-  courses: initialCourses,
-  simplifiedAddMode: true, // 預設使用簡化模式
-  toggleSimplifiedAddMode: () =>
-    set((state) => ({
-      simplifiedAddMode: !state.simplifiedAddMode,
-    })),
-  addCourse: (date, title="基礎課程") =>
-    set((state) => ({
-      courses: [
-        ...state.courses,
-        {
-          id: uuidv4(),
-          date,
-          title,
-          students: [],
-          closed: false,
-        },
-      ],
-    })),
-  closeCourse: (id) =>
-    set((state) => ({
-      courses: state.courses.map((course) => (course.id === id ? { ...course, closed: true } : course)),
-    })),
-  addStudentToCourse: (courseId, studentId) =>
-    set((state) => ({
-      courses: state.courses.map((course) =>
-        course.id === courseId ? { ...course, students: [...course.students, studentId] } : course,
-      ),
-    })),
-  // 批量添加學生到課程
-  addMultipleStudentsToCourse: (courseId, studentIds) =>
-    set((state) => ({
-      courses: state.courses.map((course) =>
-        course.id === courseId
-          ? {
-              ...course,
-              students: [...new Set([...course.students, ...studentIds])], // 使用 Set 去重
-            }
-          : course,
-      ),
-    })),
-  removeStudentFromCourse: (courseId, studentId) =>
-    set((state) => ({
-      courses: state.courses.map((course) =>
-        course.id === courseId ? { ...course, students: course.students.filter((id) => id !== studentId) } : course,
-      ),
-    })),
-  // 批量更新課程
-  batchUpdateCourses: (datesToAdd, datesToRemove) =>
-    set((state) => {
-      // 當前課程列表
-      let updatedCourses = [...state.courses]
+// 資料操作類
+export class DataStore implements IDataStore {
+  // 訂閱方法
+  subscribe = (callback: (state: State) => void) => {
+    return useStore.subscribe(callback)
+  }
+
+  // 學生相關操作
+  getStudents = async (): Promise<Student[]> => {
+    return useStore.getState().students
+  }
+
+  addStudent = async (name: string, ig?: string): Promise<Student> => {
+    const newStudent: Student = {
+      id: uuidv4(),
+      name,
+      active: true,
+      ig,
+    }
+    useStore.setState((state) => ({
+      students: [...state.students, newStudent],
+    }))
+    return newStudent
+  }
+
+  updateStudent = async (id: string, data: Partial<Student>): Promise<Student> => {
+    let updatedStudent: Student | undefined
+    useStore.setState((state) => ({
+      students: state.students.map((student) => {
+        if (student.id === id) {
+          updatedStudent = { ...student, ...data }
+          return updatedStudent
+        }
+        return student
+      }),
+    }))
+    if (!updatedStudent) throw new Error(`Student with id ${id} not found`)
+    return updatedStudent
+  }
+
+  toggleStudentStatus = async (id: string): Promise<Student> => {
+    let updatedStudent: Student | undefined
+    useStore.setState((state) => ({
+      students: state.students.map((student) => {
+        if (student.id === id) {
+          updatedStudent = { ...student, active: !student.active }
+          return updatedStudent
+        }
+        return student
+      }),
+    }))
+    if (!updatedStudent) throw new Error(`Student with id ${id} not found`)
+    return updatedStudent
+  }
+
+  // 課程相關操作
+  getCourses = async (): Promise<Course[]> => {
+    return useStore.getState().courses
+  }
+
+  addCourse = async (date: string, title: string = "基礎課程"): Promise<Course> => {
+    const newCourse: Course = {
+      id: uuidv4(),
+      date,
+      title,
+      students: [],
+      closed: false,
+    }
+    useStore.setState((state) => ({
+      courses: [...state.courses, newCourse],
+    }))
+    return newCourse
+  }
+
+  closeCourse = async (id: string): Promise<Course> => {
+    let updatedCourse: Course | undefined
+    useStore.setState((state) => ({
+      courses: state.courses.map((course) => {
+        if (course.id === id) {
+          updatedCourse = { ...course, closed: true }
+          return updatedCourse
+        }
+        return course
+      }),
+    }))
+    if (!updatedCourse) throw new Error(`Course with id ${id} not found`)
+    return updatedCourse
+  }
+
+  addStudentToCourse = async (courseId: string, studentId: string): Promise<Course> => {
+    let updatedCourse: Course | undefined
+    useStore.setState((state) => ({
+      courses: state.courses.map((course) => {
+        if (course.id === courseId) {
+          updatedCourse = {
+            ...course,
+            students: [...course.students, studentId],
+          }
+          return updatedCourse
+        }
+        return course
+      }),
+    }))
+    if (!updatedCourse) throw new Error(`Course with id ${courseId} not found`)
+    return updatedCourse
+  }
+
+  removeStudentFromCourse = async (courseId: string, studentId: string): Promise<Course> => {
+    let updatedCourse: Course | undefined
+    useStore.setState((state) => ({
+      courses: state.courses.map((course) => {
+        if (course.id === courseId) {
+          updatedCourse = {
+            ...course,
+            students: course.students.filter((id) => id !== studentId),
+          }
+          return updatedCourse
+        }
+        return course
+      }),
+    }))
+    if (!updatedCourse) throw new Error(`Course with id ${courseId} not found`)
+    return updatedCourse
+  }
+
+  addMultipleStudentsToCourse = async (courseId: string, studentIds: string[]): Promise<Course> => {
+    let updatedCourse: Course | undefined
+    useStore.setState((state) => ({
+      courses: state.courses.map((course) => {
+        if (course.id === courseId) {
+          updatedCourse = {
+            ...course,
+            students: [...new Set([...course.students, ...studentIds])],
+          }
+          return updatedCourse
+        }
+        return course
+      }),
+    }))
+    if (!updatedCourse) throw new Error(`Course with id ${courseId} not found`)
+    return updatedCourse
+  }
+
+  batchUpdateCourses = async (datesToAdd: string[], datesToRemove: string[]): Promise<Course[]> => {
+    let updatedCourses: Course[] = []
+    useStore.setState((state) => {
+      let courses = [...state.courses]
 
       // 處理要添加的日期
       datesToAdd.forEach((date) => {
-        // 檢查該日期是否已有課程
-        const existingCourse = updatedCourses.find((course) => course.date === date)
+        const existingCourse = courses.find((course) => course.date === date)
         if (!existingCourse) {
-          // 如果沒有課程，則添加新課程
-          updatedCourses.push({
+          courses.push({
             id: uuidv4(),
             date,
             title: "基礎課程",
@@ -194,8 +210,7 @@ const useCourseStore = create<CourseState>((set, get) => ({
             closed: false,
           })
         } else if (existingCourse.closed) {
-          // 如果課程已關閉，則重新開啟
-          updatedCourses = updatedCourses.map((course) =>
+          courses = courses.map((course) =>
             course.date === date ? { ...course, closed: false } : course,
           )
         }
@@ -203,41 +218,35 @@ const useCourseStore = create<CourseState>((set, get) => ({
 
       // 處理要移除的日期
       datesToRemove.forEach((date) => {
-        // 找到該日期的課程
-        const courseToRemove = updatedCourses.find((course) => course.date === date)
+        const courseToRemove = courses.find((course) => course.date === date)
         if (courseToRemove && courseToRemove.students.length === 0) {
-          // 如果課程沒有學生，則從列表中移除
-          updatedCourses = updatedCourses.filter((course) => course.date !== date)
+          courses = courses.filter((course) => course.date !== date)
         }
       })
 
-      return { courses: updatedCourses }
-    }),
-  // 檢查日期是否有課程
-  hasCourse: (date) => {
-    const { courses } = get()
-    return courses.some((course) => course.date === date && !course.closed)
-  },
-  // 檢查課程是否有學生
-  courseHasStudents: (date) => {
-    const { courses } = get()
-    const course = courses.find((course) => course.date === date)
+      updatedCourses = courses
+      return { courses }
+    })
+    return updatedCourses
+  }
+
+  hasCourse = async (date: string): Promise<boolean> => {
+    return useStore.getState().courses.some(
+      (course) => course.date === date && !course.closed,
+    )
+  }
+
+  courseHasStudents = async (date: string): Promise<boolean> => {
+    const course = useStore.getState().courses.find((course) => course.date === date)
     return course ? course.students.length > 0 : false
-  },
-}))
-
-// 創建上下文
-const StudentsContext = createContext<StudentState | null>(null)
-const CoursesContext = createContext<CourseState | null>(null)
-
-// 自定義 hooks
-export const useStudents = () => {
-  const store = useStudentStore()
-  return store
+  }
 }
 
-export const useCourses = () => {
-  const store = useCourseStore()
-  return store
-}
+// 創建單例實例
+const dataStore = new DataStore()
 
+// 導出 useDataStore hook
+export function useDataStore() {
+  const state = useStore()
+  return { ...state, ...dataStore }
+}

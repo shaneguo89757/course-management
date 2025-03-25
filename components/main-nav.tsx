@@ -5,9 +5,12 @@ import { usePathname } from "next/navigation"
 import { Calendar, Users, CalendarRange } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import GoogleAuthButton from "./GoogleAuthButton"
+import { useAuth } from "@/lib/contexts/AuthContext"
 
 export function MainNav() {
   const pathname = usePathname()
+  const { isLoading } = useAuth()
 
   const navItems = [
     {
@@ -45,6 +48,9 @@ export function MainNav() {
               <span>{item.title}</span>
             </Link>
           ))}
+          <div className="ml-4">
+            {!isLoading && <GoogleAuthButton />}
+          </div>
         </div>
       </div>
     </nav>

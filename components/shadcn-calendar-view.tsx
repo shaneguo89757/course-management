@@ -14,11 +14,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ManageCourseDialog } from "@/components/manage-course-dialog"
-import { useCourses } from "@/lib/data"
+import { useDataStore } from "@/lib/data"
+import { Course } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
 export function ShadcnCalendarView() {
-  const { courses, addCourse } = useCourses()
+  const { courses, addCourse } = useDataStore()
   const [date, setDate] = useState<Date>(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [managingCourse, setManagingCourse] = useState<string | null>(null)

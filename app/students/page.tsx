@@ -7,13 +7,13 @@ import { AddStudentDialog } from "@/components/add-student-dialog"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { DashboardShell } from "@/components/dashboard-shell"
 import { EditStudentDialog } from "@/components/edit-student-dialog"
-import { useStudents } from "@/lib/data"
+import { useDataStore } from "@/lib/data"
 import { Button } from "@/components/ui/button"
 import { type Student, useStudentColumns } from "@/components/students/columns"
 import { DataTable } from "@/components/students/data-table"
 
 export default function StudentsPage() {
-  const { students, toggleStudentStatus } = useStudents()
+  const { students, toggleStudentStatus } = useDataStore()
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingStudent, setEditingStudent] = useState<{
     id: string

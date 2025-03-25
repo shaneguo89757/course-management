@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 
-import { useCourses } from "@/lib/data"
+import { useDataStore } from "@/lib/data"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -24,7 +24,7 @@ interface AddCourseDialogProps {
 }
 
 export function AddCourseDialog({ date, open, onOpenChange }: AddCourseDialogProps) {
-  const { addCourse } = useCourses()
+  const { addCourse } = useDataStore()
   const [title, setTitle] = useState("")
 
   const formatDate = (date: Date) => {

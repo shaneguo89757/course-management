@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import Script from 'next/script'
+import { AuthProvider } from '@/lib/contexts/AuthContext'
 
 export const metadata: Metadata = {
   title: '課程管理系統',
@@ -43,7 +44,9 @@ export default function RootLayout({
       </head>
       <body className="h-full overflow-hidden">
         <div className="h-full flex flex-col">
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </div>
         <Script id="register-sw" strategy="afterInteractive">
           {`
