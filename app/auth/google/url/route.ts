@@ -9,8 +9,8 @@ const oauth2Client = new OAuth2Client(
 )
 
 const SCOPES = [
-  "https://www.googleapis.com/auth/spreadsheets",
-  "https://www.googleapis.com/auth/drive.file",
+  // "https://www.googleapis.com/auth/spreadsheets",
+  // "https://www.googleapis.com/auth/drive.file",
   "https://www.googleapis.com/auth/userinfo.email",
 ]
 
