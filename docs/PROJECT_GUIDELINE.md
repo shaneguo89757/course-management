@@ -3,11 +3,14 @@
 ## 專案概述
 這是一個基於 Next.js 的課程管理系統，提供課程管理、學生管理、認證等功能。系統採用現代化的技術棧和最佳實踐，確保可擴展性和維護性。
 
+## 部署
+Vercel
+
 ## 技術棧
 - **前端框架**: Next.js 15.1.0
 - **程式語言**: TypeScript
 - **樣式解決方案**: Tailwind CSS
-- **資料庫**: Supabase
+- **資料庫**: Vercel Storage Supabase
 - **狀態管理**: Zustand
 - **UI 組件**: 
   - Radix UI (基礎組件)
