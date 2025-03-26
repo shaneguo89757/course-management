@@ -13,71 +13,62 @@ type StudentUpdate = Database['public']['Tables']['student']['Update']
 export const courseApi = {
   // 獲取所有課程
   getAll: async () => {
-    const { data, error } = await supabase
-      .from('course')
-      .select('*')
-      .order('created_at', { ascending: false })
-    if (error) {
-      console.error('Supabase 錯誤:', error)
-      throw new Error(error.message)
+    const response = await fetch('/api/courses')
+    if (!response.ok) {
+      throw new Error('Failed to fetch courses')
     }
-    return data
+    return response.json()
   },
 
   // 獲取單個課程
   getById: async (id: number) => {
-    const { data, error } = await supabase
-      .from('course')
-      .select('*')
-      .eq('id', id)
-      .single()
-    if (error) {
-      console.error('Supabase 錯誤:', error)
-      throw new Error(error.message)
+    const response = await fetch(`/api/courses/${id}`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch course')
     }
-    return data
+    return response.json()
   },
 
   // 創建課程
   create: async (course: CourseInsert) => {
     console.log('正在創建課程:', course)
-    const { data, error } = await supabase
-      .from('course')
-      .insert(course)
-      .select()
-      .single()
-    if (error) {
-      console.error('Supabase 錯誤:', error)
-      throw new Error(error.message)
+    const response = await fetch('/api/courses', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(course),
+    })
+    if (!response.ok) {
+      throw new Error('Failed to create course')
     }
-    return data
+    return response.json()
   },
 
   // 更新課程
   update: async (id: number, course: CourseUpdate) => {
-    const { data, error } = await supabase
-      .from('course')
-      .update(course)
-      .eq('id', id)
-      .select()
-      .single()
-    if (error) {
-      console.error('Supabase 錯誤:', error)
-      throw new Error(error.message)
+    const response = await fetch(`/api/courses/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(course),
+    })
+    if (!response.ok) {
+      throw new Error('Failed to update course')
     }
-    return data
+    return response.json()
   },
 
   // 刪除課程
   delete: async (id: number) => {
-    const { error } = await supabase
-      .from('course')
-      .delete()
-      .eq('id', id)
-    if (error) {
-      console.error('Supabase 錯誤:', error)
-      throw new Error(error.message)
+    const response = await fetch(`/api/courses/${id}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) {
+      throw new Error('Failed to delete course')
     }
+    return response.json()
   }
 }
 
