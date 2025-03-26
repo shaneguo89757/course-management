@@ -30,6 +30,7 @@ export async function GET(request: Request) {
     oauth2Client.setCredentials(tokens)
     
     // 獲取用戶資訊
+    /**
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client })
     const userInfo = await oauth2.userinfo.get()
     const userEmail = userInfo.data.email;
@@ -40,18 +41,11 @@ export async function GET(request: Request) {
     if (!userEmail) {
       throw new Error("Failed to get user email")
     }
+    */
     
     // 設置安全的 cookie
     const response = NextResponse.redirect(new URL("/", request.url))
     response.cookies.set("google_auth", JSON.stringify(tokens), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    })
-    
-    // 設置用戶 email 到 cookie
-    response.cookies.set("user_email", userEmail, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
