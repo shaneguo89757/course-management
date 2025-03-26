@@ -12,6 +12,7 @@ const SCOPES = [
   // "https://www.googleapis.com/auth/spreadsheets",
   // "https://www.googleapis.com/auth/drive.file",
   "https://www.googleapis.com/auth/userinfo.email",
+  "https://www.googleapis.com/auth/userinfo.profile",
 ]
 
 export async function GET(request: Request) {
@@ -32,7 +33,9 @@ export async function GET(request: Request) {
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client })
     const userInfo = await oauth2.userinfo.get()
     const userEmail = userInfo.data.email;
+    const userName = userInfo.data.name;
     console.log("User email:", userEmail)
+    console.log("User name:", userName)
 
     if (!userEmail) {
       throw new Error("Failed to get user email")
