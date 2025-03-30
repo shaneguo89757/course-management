@@ -16,6 +16,11 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // 跳過所有 API 請求的快取
+  if (event.request.url.includes('/auth/')) {
+    return event.respondWith(fetch(event.request));
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -27,13 +32,11 @@ self.addEventListener('fetch', (event) => {
             if (!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
-            if (['GET', 'HEAD', 'POST'].includes(event.request.method)) {
-              const responseToCache = response.clone();
-              caches.open(CACHE_NAME)
-                .then((cache) => {
-                  cache.put(event.request, responseToCache);
-                });
-            }
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(event.request, responseToCache);
+              });
             return response;
           });
       })
