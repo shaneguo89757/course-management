@@ -1,58 +1,35 @@
 import { NextResponse } from "next/server"
-import { google } from "googleapis"
-import { OAuth2Client } from "google-auth-library"
-
-const oauth2Client = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI
-)
-
-const SCOPES = [
-  // "https://www.googleapis.com/auth/spreadsheets",
-  // "https://www.googleapis.com/auth/drive.file",
-  "https://www.googleapis.com/auth/userinfo.email",
-  "https://www.googleapis.com/auth/userinfo.profile",
-]
+import { oauth2Client, AUTH_COOKIE_NAME, COOKIE_OPTIONS } from "@/app/lib/google-auth"
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const code = searchParams.get("code")
-
-  if (!code) {
-    return NextResponse.json({ error: "No code provided" }, { status: 400 })
-  }
-
   try {
+    const { searchParams } = new URL(request.url)
+    const code = searchParams.get("code")
+
+    if (!code) {
+      return NextResponse.json({ error: "No code provided" }, { status: 400 })
+    }
+
     const { tokens } = await oauth2Client.getToken(code)
     
-    // 設置 token 到 client
-    oauth2Client.setCredentials(tokens)
-    
-    // 獲取用戶資訊
-    /**
-    const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client })
-    const userInfo = await oauth2.userinfo.get()
-    const userEmail = userInfo.data.email;
-    const userName = userInfo.data.name;
-    console.log("User email:", userEmail)
-    console.log("User name:", userName)
-
-    if (!userEmail) {
-      throw new Error("Failed to get user email")
+    // 確保有 refresh token
+    if (!tokens.refresh_token) {
+      throw new Error("No refresh token provided")
     }
-    */
-    
+
+    // 儲存完整的 token 資訊
+    const tokenData = {
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+      expiry_date: tokens.expiry_date,
+      scope: tokens.scope,
+      token_type: tokens.token_type,
+      id_token: tokens.id_token
+    }
+
     // 設置安全的 cookie
     const response = NextResponse.redirect(new URL("/", request.url))
-    response.cookies.set("google_auth", JSON.stringify(tokens), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    })
-
-    console.log("Google auth success:", response)
+    response.cookies.set(AUTH_COOKIE_NAME, JSON.stringify(tokenData), COOKIE_OPTIONS)
 
     return response
   } catch (error) {
