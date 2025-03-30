@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react"
-import { GoogleAuthService } from "@/lib/services/googleAuth"
+import { GoogleAuthService } from "@/lib/services/googleAuthService"
 
 type UserInfo = {
   name?: string
