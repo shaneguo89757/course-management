@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { AUTH_COOKIE_NAME } from "@/app/lib/google-auth"
 import { cookies } from "next/headers";
 
-export async function POST() {
+export async function PUT() {
    try {
     const cookieStore = await cookies();
     cookieStore.delete(AUTH_COOKIE_NAME);
