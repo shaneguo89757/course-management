@@ -37,8 +37,8 @@ export class GoogleAuthService {
 
   static async logout(): Promise<void> {
     try {
-      const response = await fetch("/auth/google/logout", {
-        method: "PUT",
+      const response = await fetch('/auth/google/logout', {
+        method: 'PUT',
       })
       if (!response.ok) {
         throw new Error("Failed to logout")
