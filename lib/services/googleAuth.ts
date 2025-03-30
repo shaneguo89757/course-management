@@ -22,6 +22,19 @@ export class GoogleAuthService {
     }
   }
 
+  static async getUserInfo() {
+    try {
+      const response = await fetch("/auth/google/userinfo")
+      if (!response.ok) {
+        throw new Error("Failed to get user info")
+      }
+      return await response.json()
+    } catch (error) {
+      console.error("User info error:", error)
+      throw error
+    }
+  }
+
   static async logout(): Promise<void> {
     try {
       const response = await fetch("/auth/google/logout", {
