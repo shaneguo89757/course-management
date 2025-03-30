@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/contexts/AuthContext"
 import { ChevronDown, User, LogOut } from "lucide-react"
 
@@ -8,6 +9,7 @@ export default function GoogleAuthButton() {
   const { isAuthorized, isLoading, login, logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -36,8 +38,7 @@ export default function GoogleAuthButton() {
   }
 
   const handleProfileManagement = () => {
-    // Placeholder for profile management functionality
-    console.log("Navigate to profile management")
+    router.push("/profile")
     setIsOpen(false)
   }
 
