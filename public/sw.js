@@ -16,8 +16,8 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // 跳過所有 API 請求的快取
-  if (event.request.url.includes('/auth/')) {
+  // 只緩存 GET 請求，其他方法（POST、PUT、DELETE 等）直接發送到伺服器
+  if (event.request.method !== 'GET') {
     return event.respondWith(fetch(event.request));
   }
 
