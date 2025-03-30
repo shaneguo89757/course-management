@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import Script from 'next/script'
+import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: '課程管理系統',
@@ -42,9 +43,11 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="h-full overflow-hidden">
-        <div className="h-full flex flex-col">
-          {children}
-        </div>
+        <Providers>
+          <div className="h-full flex flex-col">
+            {children}
+          </div>
+        </Providers>
         <Script id="register-sw" strategy="afterInteractive">
           {`
             if ('serviceWorker' in navigator) {

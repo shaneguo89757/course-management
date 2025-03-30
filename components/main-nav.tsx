@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { Calendar, Users, CalendarRange } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { AuthNav } from "./auth-nav"
 
 export function MainNav() {
   const pathname = usePathname()
@@ -45,6 +46,7 @@ export function MainNav() {
               <span>{item.title}</span>
             </Link>
           ))}
+          <AuthNav />
         </div>
       </div>
     </nav>
