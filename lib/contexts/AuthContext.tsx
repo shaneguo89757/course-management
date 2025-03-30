@@ -42,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuth = async () => {
       try {
         const status = await GoogleAuthService.isAuthorized()
+        console.log("====>AuthContext: Auth status:", status)
         setIsAuthorized(status)
         if (status) {
           await refreshUserInfo()

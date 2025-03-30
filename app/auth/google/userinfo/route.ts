@@ -1,17 +1,11 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { google } from "googleapis"
-import { OAuth2Client } from "google-auth-library"
-
-const oauth2Client = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI
-)
+import { oauth2Client, AUTH_COOKIE_NAME } from "@/app/lib/google-auth"
 
 export async function GET() {
   const cookieStore = await cookies()
-  const authCookie = cookieStore.get("google_auth")
+  const authCookie = cookieStore.get(AUTH_COOKIE_NAME)
 
   if (!authCookie) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
