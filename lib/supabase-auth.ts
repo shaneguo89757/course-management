@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 
 export async function supabaseAuth(provider: string, providerAccountId: string): Promise<string | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
           
   try {
     // 1. 檢查 login 是否存在
