@@ -1,6 +1,6 @@
-const CACHE_NAME = 'course-management-v1';
-const STATIC_CACHE_NAME = 'course-management-static-v1';
-const DYNAMIC_CACHE_NAME = 'course-management-dynamic-v1';
+const APP_VERSION = `v${Date.now()}`; // 每次發布更新時修改此版本號
+const STATIC_CACHE_NAME = `course-management-static-${APP_VERSION}`;
+const DYNAMIC_CACHE_NAME = `course-management-dynamic-${APP_VERSION}`;
 
 // 靜態資源：應用核心文件
 const STATIC_ASSETS = [
@@ -22,12 +22,15 @@ function shouldIgnoreRequest(url) {
   return IGNORED_PATHS.some(path => url.includes(path));
 }
 
-// 安裝事件：快取靜態資源
+// 安裝事件：快取靜態資源並立即激活
 self.addEventListener('install', (event) => {
+  // 跳過等待，立即激活新版本
+  self.skipWaiting();
+
   event.waitUntil(
     caches.open(STATIC_CACHE_NAME)
       .then((cache) => {
-        console.log('Caching static assets');
+        console.log('Caching static assets for version', APP_VERSION);
         return cache.addAll(STATIC_ASSETS);
       })
   );
@@ -35,17 +38,21 @@ self.addEventListener('install', (event) => {
 
 // 激活事件：清理舊的快取
 self.addEventListener('activate', (event) => {
+  // 接管所有開啟的頁面
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== STATIC_CACHE_NAME &&
-            cacheName !== DYNAMIC_CACHE_NAME) {
+          // 刪除所有不屬於當前版本的緩存
+          if (cacheName.startsWith('course-management-') &&
+            !cacheName.includes(APP_VERSION)) {
             console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
+    }).then(() => {
+      return self.clients.claim(); // 接管所有打開的頁面
     })
   );
 });
@@ -70,7 +77,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 處理導航請求
+  // 處理導航請求 - 使用網路優先策略
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
