@@ -10,11 +10,13 @@ declare module 'next-auth' {
       name: string;
       image?: string;
     };
+    supabaseId: string | null;
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
     id: string;
+    supabaseId: string | null;
   }
 } 
