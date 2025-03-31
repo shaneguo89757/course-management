@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import Script from 'next/script'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -48,22 +47,6 @@ export default function RootLayout({
             {children}
           </div>
         </Providers>
-        <Script id="register-sw" strategy="afterInteractive">
-          {`
-            if ('serviceWorker' in navigator) {
-              window.addEventListener('load', () => {
-                navigator.serviceWorker
-                  .register('/sw.js')
-                  .then((registration) => {
-                    console.log('SW registered: ', registration);
-                  })
-                  .catch((registrationError) => {
-                    console.log('SW registration failed: ', registrationError);
-                  });
-              });
-            }
-          `}
-        </Script>
       </body>
     </html>
   )
