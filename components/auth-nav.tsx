@@ -5,7 +5,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 export function AuthNav() {
   const { data: session } = useSession();
-  console.log(session);
+  
   if (session) {
     return (
       <div className="flex items-center gap-4">
