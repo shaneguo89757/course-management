@@ -14,11 +14,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ManageCourseDialog } from "@/components/manage-course-dialog"
-import { useCourses } from "@/lib/data"
+import { useCourses } from "@/lib/data/index"
 import { cn } from "@/lib/utils"
 
 export function ShadcnCalendarView() {
-  const { courses, addCourse } = useCourses()
+  const { courses, addCourse, fetchCourses } = useCourses()
   const [date, setDate] = useState<Date>(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [managingCourse, setManagingCourse] = useState<string | null>(null)
@@ -39,6 +39,8 @@ export function ShadcnCalendarView() {
       }
     }
 
+    fetchCourses()
+
     // 初始檢查
     checkScreenSize()
 
@@ -47,7 +49,7 @@ export function ShadcnCalendarView() {
       window.addEventListener('resize', checkScreenSize)
       return () => window.removeEventListener('resize', checkScreenSize)
     }
-  }, []) // 移除 numberOfMonths 依賴，因為我們只需要在組件掛載時設定監聽
+  }, [fetchCourses]) // 移除 numberOfMonths 依賴，因為我們只需要在組件掛載時設定監聽
 
   // 格式化日期為 YYYY-MM-DD
   const formatDate = (date: Date | undefined) => {
@@ -59,7 +61,7 @@ export function ShadcnCalendarView() {
   const getCourseForDate = (date: Date | undefined) => {
     if (!date) return null
     const dateString = formatDate(date)
-    return courses.find((course) => course.date === dateString && !course.closed)
+    return courses.find((course) => course.date === dateString)
   }
 
   // 處理管理課程
@@ -69,22 +71,21 @@ export function ShadcnCalendarView() {
 
   // 獲取當前月份的所有課程日期
   const getCourseDates = () => {
-    return courses.filter((course) => !course.closed).map((course) => new Date(course.date))
+    return courses.map((course) => new Date(course.date))
   }
 
   // 獲取所有課程日期
   const courseDates = courses
-    .filter(course => !course.closed)
     .map(course => new Date(course.date))
 
   // 獲取已滿的課程日期
   const fullCourseDates = courses
-    .filter(course => !course.closed && course.students.length >= 4) // 假設 4 人為滿班
+    .filter(course => course.students.length >= 4)
     .map(course => new Date(course.date))
 
   // 獲取尚有空位的課程日期
   const availableCourseDates = courses
-    .filter(course => !course.closed && course.students.length < 4)
+    .filter(course => course.students.length < 4)
     .map(course => new Date(course.date))
 
   // 當前選中日期的課程
@@ -208,7 +209,7 @@ export function ShadcnCalendarView() {
               {selectedCourse ? (
                 <div className="space-y-4">
                   <div>
-                    <h3 className="font-medium">{selectedCourse.title}</h3>
+                    <h3 className="font-medium">{selectedCourse.name}</h3>
                     <div className="flex items-center text-sm text-muted-foreground">
                       <Users className="h-4 w-4 mr-1" />
                       <span>{selectedCourse.students.length} 位學員</span>

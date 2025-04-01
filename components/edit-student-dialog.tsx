@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 
-import { useStudents } from "@/lib/data"
+import { useStudents } from "@/lib/data/index"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,

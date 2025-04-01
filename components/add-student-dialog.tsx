@@ -2,9 +2,9 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 
-import { useStudents } from "@/lib/data"
+import { useStudents } from "@/lib/data/index"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -26,6 +26,7 @@ export function AddStudentDialog({ open, onOpenChange }: AddStudentDialogProps) 
   const { addStudent } = useStudents()
   const [name, setName] = useState("")
   const [ig, setIg] = useState("")
+  const focusAnchorRef = useRef<HTMLButtonElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -69,7 +70,7 @@ export function AddStudentDialog({ open, onOpenChange }: AddStudentDialogProps) 
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} >
               取消
             </Button>
-            <Button type="submit" disabled={!name.trim()}>
+            <Button ref={focusAnchorRef} type="submit" disabled={!name.trim()}>
               新增
             </Button>
           </DialogFooter>

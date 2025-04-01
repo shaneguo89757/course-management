@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 
-import { useCourses } from "@/lib/data"
+import { useCourses } from "@/lib/data/index"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,

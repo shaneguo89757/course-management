@@ -15,8 +15,8 @@ export function generateSupabaseJWT(
         role,
         exp: Math.floor(Date.now() / 1000) + 60 * 60 * 8 // 8 小時有效期
     };
-
-    return sign(payload, process.env.SUPABASE_JWT_SECRET!, { algorithm: "HS256" });
+    console.log('payload userId:', userId);
+    return sign(payload, process.env.SUPABASE_JWT_SECRET!);
 }
 
 export function verifySupabaseJWT(token: string): JWTPayload | null {

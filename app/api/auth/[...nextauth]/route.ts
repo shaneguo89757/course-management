@@ -41,9 +41,12 @@ const handler = NextAuth({
                 token.picture = user.image;
 
                 token.supabaseId = await supabaseAuth(account.provider, account.providerAccountId);
+                console.log('token.supabaseId:', token.supabaseId);
                 token.supabaseJWT = token.supabaseId
                     ? generateSupabaseJWT(token.supabaseId as string)
                     : null;
+
+                console.log('token.supabaseJWT:', token.supabaseJWT);
             }
 
             return token;

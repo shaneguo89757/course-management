@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Check, Instagram, PlusCircle, Search, LogOut, X } from "lucide-react"
-import { useCourses, useStudents } from "@/lib/data"
+import { useCourses, useStudents } from "@/lib/data/index"
 import { Button } from "@/components/ui/button"
 import { Users } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -86,7 +86,7 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
         <div className="pt-6 px-6">
           <DialogHeader className="flex justify-between">
             <DialogTitle className="text-left flex items-center gap-2">
-              <span>{course.title}</span>
+              <span>{course.name}</span>
             </DialogTitle>
             <DialogDescription className="text-left flex items-center gap-2">
               <span>{formatDate(course.date)} - </span>
