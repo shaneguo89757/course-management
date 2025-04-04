@@ -16,10 +16,11 @@ interface Student {
 // 學生狀態管理
 interface StudentState {
     students: Student[];
+    isInitialized: boolean;
+    fetchStudents: () => Promise<void>; // 新增：從 Supabase 獲取學生
     addStudent: (name: string, ig?: string) => Promise<void>;
     updateStudent: (id: string, data: { name?: string; ig?: string }) => Promise<void>;
     toggleStudentStatus: (id: string) => Promise<void>;
-    fetchStudents: () => Promise<void>; // 新增：從 Supabase 獲取學生
 }
 
 // 初始學生數據
@@ -75,8 +76,12 @@ const isLoggedIn = async () => {
 // 創建學生狀態管理
 export const useStudentStore = create<StudentState>((set, get) => ({
     students: [], // 初始狀態為空，後續根據模式載入
-
+    isInitialized: false,
     fetchStudents: async () => {
+        if (get().isInitialized) {
+            return;
+        }
+        
         const loggedIn = await isLoggedIn();
         if (loggedIn) {
             // 已登入：從 Supabase 獲取資料
@@ -87,7 +92,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
                 if (error) {
                     console.error("Error fetching students from Supabase:", error);
                 } else {
-                    set({ students: data || [] });
+                    set({ students: data || [], isInitialized: true });
                 }
             } catch (e) {
                 console.error("Failed to fetch students from Supabase:", e);
@@ -95,7 +100,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
         } else {
             // 未登入：從 localStorage 獲取資料
             const localStudents = loadStudentsFromLocalStorage();
-            set({ students: localStudents });
+            set({ students: localStudents, isInitialized: true });
         }
     },
 
