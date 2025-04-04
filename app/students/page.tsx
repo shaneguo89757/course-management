@@ -26,7 +26,7 @@ export default function StudentsPage() {
   // 在頁面載入時獲取學生資料
   useEffect(() => {
     fetchStudents();
-  }, [fetchStudents]);
+  }, []);
 
   // 處理編輯學員
   const handleEditStudent = (student: Student) => {

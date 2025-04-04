@@ -21,7 +21,7 @@ interface ManageCourseDialogProps {
 
 export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCourseDialogProps) {
   const { courses, removeStudentFromCourse, addMultipleStudentsToCourse, closeCourse } = useCourses()
-  const { students } = useStudents()
+  const { students, fetchStudents } = useStudents()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([])
@@ -37,6 +37,7 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
         (student.ig && student.ig.toLowerCase().includes(searchTerm.toLowerCase()))),
   )
 
+
   // 清除選擇的學生
   useEffect(() => {
     if (!open) {
@@ -44,6 +45,11 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
       setSearchTerm("")
     }
   }, [open])
+
+  // 獲取學生資料
+  useEffect(() => {
+    fetchStudents()
+  }, [])
 
   if (!course) return null
 
