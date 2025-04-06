@@ -88,7 +88,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
             try {
                 const token = await getSupabaseJWT();
                 const supabase = createAuthClient(token);
-                const { data, error } = await supabase.from("student").select("*");
+                const { data, error } = await supabase.from("student").select("*").order("name", { ascending: false });
                 if (error) {
                     console.error("Error fetching students from Supabase:", error);
                 } else {
