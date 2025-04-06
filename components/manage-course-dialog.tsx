@@ -20,13 +20,13 @@ interface ManageCourseDialogProps {
 }
 
 export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCourseDialogProps) {
-  const { courses, removeStudentFromCourse, addMultipleStudentsToCourse, closeCourse } = useCourses()
+  const { findCourseById, removeStudentFromCourse, addMultipleStudentsToCourse, closeCourse } = useCourses()
   const { students, fetchStudents } = useStudents()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([])
 
-  const course = courses.find((c) => c.id === courseId)
+  const course = findCourseById(courseId)
   const activeStudents = students.filter((s) => s.active)
 
   // 過濾掉已經在課程中的學生，並根據搜尋詞過濾（名稱或 IG 帳號）
@@ -238,8 +238,8 @@ function AvailableStudentsList({
   }
   
   return (
-    <ScrollArea className="h-[200px] border rounded-md">
-      <div className="p-2">
+    <ScrollArea className="h-[200px] border rounded-md py-1">
+      <div className="mx-2">
         {availableStudents.map((student, index) => (
           <StudentListItem 
             key={student.id}
@@ -267,7 +267,7 @@ function StudentListItem({
   isLast: boolean
 }) {
   return (
-    <div key={student.id}>
+    <div key={student.id} className="my-1">
       <div
         className={cn(
           "flex items-center justify-between p-2 rounded-md cursor-pointer",

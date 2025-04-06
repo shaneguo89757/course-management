@@ -1,69 +1,76 @@
 "use client"
+import { useState, useEffect } from "react";
+import { format, addMonths, subMonths, isSameDay, isSameMonth } from "date-fns";
+import { zhTW } from "date-fns/locale";
+import { Users } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ManageCourseDialog } from "@/components/manage-course-dialog";
+import { useCourses } from "@/lib/data/index";
+import { cn } from "@/lib/utils";
 
-import type React from "react"
+const getYearMonth = (d: Date) => format(d, "yyyyMM"); // e.g., "202504"
+const formatDate = (date: Date | undefined) => {
+  if (!date) return "";
+  return format(date, "yyyyMMdd");
+};
 
-import { useState, useEffect } from "react"
-import { format, addMonths, subMonths, isSameDay, isSameMonth } from "date-fns"
-import { zhTW } from "date-fns/locale"
-import { ChevronLeft, ChevronRight, Users } from "lucide-react"
-import { DayProps } from "react-day-picker"
-
-import { Calendar } from "@/components/ui/calendar"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ManageCourseDialog } from "@/components/manage-course-dialog"
-import { useCourses } from "@/lib/data/index"
-import { cn } from "@/lib/utils"
+const checkScreenSize = () => {
+  const width = window.innerWidth;
+  if (width >= 1200) return 3;
+  else if (width >= 992) return 2;
+  else return 1;
+};
 
 export function ShadcnCalendarView() {
-  const { courses, addCourse, fetchCourses } = useCourses();
-  const [date, setDate] = useState<Date>(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const { addCourse, fetchCourses, getCoursesForMonth, courseMonths } = useCourses();
+  const [today] = useState<number>(()=>parseInt(formatDate(new Date())));
+  const [nowDate, setNowDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date|undefined>(new Date());
   const [managingCourse, setManagingCourse] = useState<string | null>(null);
-  const [numberOfMonths, setNumberOfMonths] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [numberOfMonths, setNumberOfMonths] = useState(3);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
 
-  const checkScreenSize = () => {
-    const width = window.innerWidth;
-    if (width >= 1200) {
-      setNumberOfMonths(3);
-    } else if (width >= 992) {
-      setNumberOfMonths(2);
-    } else {
-      setNumberOfMonths(1);
-    }
-  };
-
-  const loadData = async () => {
-    setIsLoading(true);
-    await fetchCourses();
-    setIsLoading(false);
-  };
-
-  const formatDate = (date: Date | undefined) => {
-    if (!date) return "";
-    return format(date, "yyyy-MM-dd");
+  const fetchVisibleMonths = async (currentDate: Date) => {
+    const yearMonths = Array.from({ length: numberOfMonths }, (_, i) =>
+      getYearMonth(addMonths(currentDate, i))
+    );
+    await fetchCourses(yearMonths);
   };
 
   const getCourseForDate = (date: Date | undefined) => {
     if (!date) return null;
-    const dateString = formatDate(date);
-    return courses.find((course) => course.date === dateString) || null;
+    const yearMonth = getYearMonth(date);
+    const monthCourses = getCoursesForMonth(yearMonth);
+    const yyyyMMdd = parseInt(formatDate(date));
+    return monthCourses.find((course) => course.date === yyyyMMdd) || null;
   };
-  
-  useEffect(() => {
-    if (typeof window === "undefined") return;
 
-    // loadData();
-    fetchCourses();
-    checkScreenSize();
+  const isBeforeThenToday = (day: Date) => {
+    const yyyyMMdd = parseInt(formatDate(day));
+    return yyyyMMdd < today;
+  }
+
+  const addCourseToDate = (date: Date) => {
+    const yyyyMMdd = parseInt(formatDate(date));
+    addCourse(yyyyMMdd, "基礎課程");
+  }
+
+  const handleMonthChange = (newMonth: Date) => {
+    setNowDate(newMonth);
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newNumber = checkScreenSize();
+      setNumberOfMonths(newNumber);
+    };
 
     if (window.innerWidth >= 768) {
-      window.addEventListener("resize", checkScreenSize);
-      return () => window.removeEventListener("resize", checkScreenSize);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
     }
   }, []);
 
@@ -74,164 +81,103 @@ export function ShadcnCalendarView() {
     } else {
       setSelectedCourse(null);
     }
-  }, [selectedDate, courses]);
+  }, [selectedDate, courseMonths]);
 
-  if (isLoading) {
-    return <div>載入中...</div>;
-  }
+  useEffect(() => {
+    fetchVisibleMonths(nowDate);
+  }, [nowDate]);
+
+  const customDay = ({ date }: { date: Date }) => {
+    const course = getCourseForDate(date);
+    return (
+      <div className="relative h-9 w-9 flex items-center justify-center">
+        <span>{date.getDate()}</span>
+        {course && (
+          <Badge
+            className={cn(
+              "absolute bottom-1 h-1.5 w-1.5 rounded-full p-0", // 沒有編匡
+              course.students.length >= 7 ? "bg-red-500" : "bg-blue-500" // 先不做任何顏色變化
+            )}
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-4">
-      <CalendarHeader date={date} />
-      
       <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
-        <CalendarGrid 
-          date={date}
+        <CalendarGrid
           selectedDate={selectedDate}
-          setDate={setDate}
           setSelectedDate={setSelectedDate}
           numberOfMonths={numberOfMonths}
-          getCourseForDate={getCourseForDate}
+          isBeforeThenToday={isBeforeThenToday}
+          customDay={customDay}
+          handleMonthChange={handleMonthChange}
         />
-
-        <CalendarSidebar 
+        <CalendarSidebar
           selectedDate={selectedDate}
           selectedCourse={selectedCourse}
           setManagingCourse={setManagingCourse}
-          addCourse={addCourse}
-          formatDate={formatDate}
+          addCourseToDate={addCourseToDate}
         />
       </div>
 
+      {/* 管理課程 Dialog */}
       {managingCourse && (
         <ManageCourseDialog
           courseId={managingCourse}
           open={!!managingCourse}
-          onOpenChange={(open) => {
-            if (!open) setManagingCourse(null)
-          }}
+          onOpenChange={(open) => !open && setManagingCourse(null)}
         />
       )}
     </div>
-  )
-}
-
-// Calendar Header Component
-function CalendarHeader({ date }: { date: Date }) {
-  return (
-    <div className="flex items-center justify-between">
-      <h2 className="text-xl font-bold">
-        {format(date, "yyyy年MM月", { locale: zhTW })}
-      </h2>
-    </div>
-  )
+  );
 }
 
 // Calendar Grid Component
 function CalendarGrid({ 
-  date, 
   selectedDate, 
-  setDate, 
   setSelectedDate, 
   numberOfMonths,
-  getCourseForDate 
+  isBeforeThenToday,
+  customDay,
+  handleMonthChange
 }: { 
-  date: Date
   selectedDate: Date | undefined
-  setDate: (date: Date) => void
-  setSelectedDate: (date: Date) => void
+  setSelectedDate:any
   numberOfMonths: number
-  getCourseForDate: (date: Date | undefined) => any
+  isBeforeThenToday: (day: Date) => boolean
+  customDay: ({ date }: { date: Date }) => React.ReactNode
+  handleMonthChange: (newMonth: Date) => void
 }) {
   return (
     <div className="md:col-span-5">
       <Card>
         <CardContent className="w-auto p-0 flex justify-center">
           <Calendar
-            className="rounded-md border-0 select-none"
+            classNames={{
+              root: "rounded-md border-0 select-none",
+              day_today: "underline",
+            }}
             mode="single"
             numberOfMonths={numberOfMonths}
             selected={selectedDate}
-            onSelect={(day) => {
-              if (day) {
-                setDate(day)
-                setSelectedDate(day)
-              }
-            }}
-            defaultMonth={date}
+            onSelect={setSelectedDate}
             fromDate={new Date(2024, 0, 1)}
+            modifiers={{ past: isBeforeThenToday }} // 定義過去日期的條件
+            modifiersClassNames={{
+              past: "text-gray-400 opacity-50", // 過去日期設為灰色
+            }}
             showOutsideDays={false}
             locale={zhTW}
             components={{
-              Day: (props: DayProps) => {
-                const { date: day, displayMonth } = props
-                if (!day || !isSameMonth(day, displayMonth)) {
-                  return null
-                }
-
-                const course = getCourseForDate(day)
-                const isSelected = selectedDate ? isSameDay(day, selectedDate) : false
-                const isBeforeThenToday = day < new Date()
-
-                return (
-                  <CalendarDay 
-                    day={day}
-                    course={course}
-                    isSelected={isSelected}
-                    isBeforeThenToday={isBeforeThenToday}
-                    onSelect={() => {
-                      setDate(day)
-                      setSelectedDate(day)
-                    }}
-                  />
-                )
-              }
+              DayContent: customDay
             }}
+            onMonthChange={handleMonthChange}
           />
         </CardContent>
       </Card>
-    </div>
-  )
-}
-
-// Calendar Day Component
-function CalendarDay({ 
-  day, 
-  course, 
-  isSelected, 
-  isBeforeThenToday,
-  onSelect 
-}: { 
-  day: Date
-  course: any
-  isSelected: boolean
-  isBeforeThenToday: boolean
-  onSelect: () => void
-}) {
-  return (
-    <div
-      onClick={onSelect}
-      className={cn(
-        "relative flex h-9 w-9 items-center justify-center p-0 font-normal rounded-md scale-95",
-        "transition-all duration-200 ease-in-out hover:scale-100 hover:shadow-md hover:bg-gray-100",
-        course && "bg-blue-100 text-blue-600 hover:bg-gray-100",
-        isSelected && "bg-primary text-primary-foreground hover:bg-primary/90",
-        !isSelected && isBeforeThenToday && "opacity-40",
-        "text-lg font-medium"
-      )}
-    >
-      {day.getDate()}
-      {course && (
-        <div className="absolute bottom-1 left-0 right-0 flex justify-center">
-          <Badge 
-            variant="outline" 
-            className={cn(
-              "h-1.5 w-1.5 rounded-full p-0",
-              course.students.length >= 4 ? "bg-red-500" : "bg-blue-500"
-            )} 
-          />
-        </div>
-      )}
     </div>
   )
 }
@@ -241,14 +187,12 @@ function CalendarSidebar({
   selectedDate, 
   selectedCourse, 
   setManagingCourse, 
-  addCourse, 
-  formatDate 
+  addCourseToDate
 }: { 
   selectedDate: Date | undefined
   selectedCourse: any
   setManagingCourse: (id: string | null) => void
-  addCourse: (date: string, name: string) => void
-  formatDate: (date: Date | undefined) => string
+  addCourseToDate: (date: Date) => void
 }) {
   return (
     <div className="md:col-span-2">
@@ -270,7 +214,7 @@ function CalendarSidebar({
           ) : (
             <NoCourseView 
               selectedDate={selectedDate}
-              onAddCourse={() => addCourse(formatDate(selectedDate), "基礎課程")}
+              onAddCourse={addCourseToDate}
             />
           )}
         </CardContent>
@@ -301,7 +245,7 @@ function CourseDetails({ course, onManage }: { course: any, onManage: () => void
 }
 
 // No Course View Component
-function NoCourseView({ selectedDate, onAddCourse }: { selectedDate: Date | undefined, onAddCourse: () => void }) {
+function NoCourseView({ selectedDate, onAddCourse }: { selectedDate: Date | undefined, onAddCourse: (date: Date) => void }) {
   return (
     <div className="space-y-4">
       <div>
@@ -314,7 +258,7 @@ function NoCourseView({ selectedDate, onAddCourse }: { selectedDate: Date | unde
       {selectedDate && (
         <Button
           variant="outline"
-          onClick={onAddCourse}
+          onClick={() => onAddCourse(selectedDate)}
           className="w-full transform transition-transform duration-200 hover:scale-[1.02] active:scale-95"
         >
           新增課程
