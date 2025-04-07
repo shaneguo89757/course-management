@@ -29,7 +29,6 @@ export function MainNav() {
         <div className="mr-4">
           <Link href="/" className="flex items-center space-x-2">
             <Calendar className="h-6 w-6" />
-            <span className="font-bold">課程管理系統</span>
           </Link>
         </div>
         <div className="flex items-center space-x-4 ml-auto">
