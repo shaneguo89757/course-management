@@ -30,7 +30,7 @@ export function ShadcnCalendarView() {
   const [nowDate, setNowDate] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(new Date());
   const [managingCourse, setManagingCourse] = useState<string | null>(null);
-  const [numberOfMonths, setNumberOfMonths] = useState(3);
+  const [numberOfMonths, setNumberOfMonths] = useState(0);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
 
   const fetchVisibleMonths = async (currentDate: Date) => {
@@ -67,6 +67,8 @@ export function ShadcnCalendarView() {
       const newNumber = checkScreenSize();
       setNumberOfMonths(newNumber);
     };
+
+    handleResize();
 
     if (window.innerWidth >= 768) {
       window.addEventListener("resize", handleResize);
