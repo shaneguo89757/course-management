@@ -3,12 +3,9 @@ import "next-auth/jwt";
 
 declare module "next-auth" {
     interface Session {
-        user: {
-            id: string;
-            email: string;
-            name: string;
-            image?: string;
-        };
+        user: User;
+        accessToken: string;
+        error: string | null;
         supabaseId: string | null;
         supabaseJWT: string | null;
     }
@@ -16,7 +13,10 @@ declare module "next-auth" {
 
 declare module "next-auth/jwt" {
     interface JWT {
-        id: string;
+        accessToken: string;
+        accessTokenExpires: number | undefined;
+        refreshToken: string;
+        user: User;
         supabaseId: string | null;
         supabaseJWT: string | null;
     }

@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 import { createAuthClient } from "@/utils/supabase/client";
-import { getSession } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 
 // 學生類型
 interface Student {
@@ -61,9 +61,11 @@ const saveStudentsToLocalStorage = (students: Student[]) => {
 // 獲取 Supabase JWT（已登入時使用）
 const getSupabaseJWT = async () => {
     const session = await getSession();
-    if (!session || !session.supabaseJWT) {
-        throw new Error("No valid Supabase JWT found in session");
+    if (session?.error === "RefreshAccessTokenError") {
+        signIn("google");
     }
+
+    if (!session || !session.supabaseJWT) throw new Error("No valid Supabase JWT found");
     return session.supabaseJWT as string;
 };
 

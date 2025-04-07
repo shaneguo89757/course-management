@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
-import { getSession } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { createAuthClient } from "@/utils/supabase/client";
 
 interface Course {
@@ -56,6 +56,10 @@ const saveToLocalStorage = (key: string, data: any[]) => {
 // 獲取 Supabase JWT
 const getSupabaseJWT = async () => {
     const session = await getSession();
+    if (session?.error === "RefreshAccessTokenError") {
+        signIn("google");
+    }
+
     if (!session || !session.supabaseJWT) throw new Error("No valid Supabase JWT found");
     return session.supabaseJWT as string;
 };
@@ -65,10 +69,6 @@ const isLoggedIn = async () => {
     const session = await getSession();
     return !!session && !!session.supabaseJWT;
 };
-
-const getCourseByYearMonth = async (courseMonths: CourseMonth[], yyyyMM: string) => {
-    return courseMonths.find((cm) => cm.yearMonth === yyyyMM);
-}
 
 // 課程狀態管理
 export const useCourseStore = create<CourseState>((set, get) => ({
