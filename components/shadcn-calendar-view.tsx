@@ -274,10 +274,10 @@ function NoCourseView({ selectedDate, onAddCourse }: { selectedDate: Date | unde
         <Button
           variant="outline"
           onClick={handleAddCourse}
-          disabled={isLoading}
           className="w-full transform transition-transform duration-200 hover:scale-[1.02] active:scale-95"
+          loading={isLoading}
         >
-          {isLoading ? "處理中..." : "新增課程"}
+          {isLoading ? "新增課程中..." : "新增課程"}
         </Button>
       )}
     </div>
