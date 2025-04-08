@@ -28,7 +28,6 @@ export function MainNav() {
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center px-4 justify-between">
         <div className="mr-4">
-          <Link href="/" className="flex items-center space-x-2">
             <Image 
               src="/icons/icon.svg" 
               alt="Course Management Logo" 
@@ -36,7 +35,6 @@ export function MainNav() {
               height={64} 
               className="h-8 w-8"
             />
-          </Link>
         </div>
         <div className="flex items-center space-x-4 ml-auto">
           {navItems.map((item) => (
