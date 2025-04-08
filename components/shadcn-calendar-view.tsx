@@ -30,7 +30,7 @@ export function ShadcnCalendarView() {
   const [nowDate, setNowDate] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date|undefined>(new Date());
   const [managingCourse, setManagingCourse] = useState<string | null>(null);
-  const [numberOfMonths, setNumberOfMonths] = useState(0);
+  const [numberOfMonths, setNumberOfMonths] = useState(1);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
 
   const fetchVisibleMonths = async (currentDate: Date) => {
