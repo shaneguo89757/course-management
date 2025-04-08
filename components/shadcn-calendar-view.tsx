@@ -53,9 +53,9 @@ export function ShadcnCalendarView() {
     return yyyyMMdd < today;
   }
 
-  const addCourseToDate = (date: Date) => {
+  const addCourseToDate = async (date: Date) => {
     const yyyyMMdd = parseInt(formatDate(date));
-    addCourse(yyyyMMdd, "基礎課程");
+    return await addCourse(yyyyMMdd, "基礎課程");
   }
 
   const handleMonthChange = (newMonth: Date) => {
@@ -248,6 +248,19 @@ function CourseDetails({ course, onManage }: { course: any, onManage: () => void
 
 // No Course View Component
 function NoCourseView({ selectedDate, onAddCourse }: { selectedDate: Date | undefined, onAddCourse: (date: Date) => void }) {
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const handleAddCourse = async () => {
+    if (!selectedDate) return;
+    
+    setIsLoading(true);
+    try {
+      await onAddCourse(selectedDate);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   return (
     <div className="space-y-4">
       <div>
@@ -260,10 +273,11 @@ function NoCourseView({ selectedDate, onAddCourse }: { selectedDate: Date | unde
       {selectedDate && (
         <Button
           variant="outline"
-          onClick={() => onAddCourse(selectedDate)}
+          onClick={handleAddCourse}
+          disabled={isLoading}
           className="w-full transform transition-transform duration-200 hover:scale-[1.02] active:scale-95"
         >
-          新增課程
+          {isLoading ? "處理中..." : "新增課程"}
         </Button>
       )}
     </div>
