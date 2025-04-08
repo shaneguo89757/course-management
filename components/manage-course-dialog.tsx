@@ -70,10 +70,10 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
   }
 
   // 添加選中的學生
-  const handleAddSelectedStudents = () => {
+  const handleAddSelectedStudents = async () => {
     if (selectedStudentIds.length > 0) {
       // 添加多個學生到課程
-      addMultipleStudentsToCourse(courseId, selectedStudentIds)
+      await addMultipleStudentsToCourse(courseId, selectedStudentIds)
       setSelectedStudentIds([])
     }
   }
@@ -163,9 +163,22 @@ function StudentSearchSection({
   availableStudents: any[]
   selectedStudentIds: string[]
   toggleStudentSelection: (studentId: string) => void
-  handleAddSelectedStudents: () => void
+  handleAddSelectedStudents: () => Promise<void>
   getStudent: (studentId: string) => any
 }) {
+  const [isAddingStudents, setIsAddingStudents] = useState(false);
+  
+  const handleAddStudents = async () => {
+    if (selectedStudentIds.length === 0) return;
+    
+    setIsAddingStudents(true);
+    try {
+      await handleAddSelectedStudents();
+    } finally {
+      setIsAddingStudents(false);
+    }
+  };
+  
   return (
     <div className="space-y-2">
       <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -184,12 +197,12 @@ function StudentSearchSection({
       />
       
       <Button 
-        onClick={handleAddSelectedStudents} 
-        disabled={selectedStudentIds.length === 0} 
+        onClick={handleAddStudents} 
+        disabled={selectedStudentIds.length === 0 || isAddingStudents} 
         className="w-full"
+        loading={isAddingStudents}
       >
-        <PlusCircle className="mr-2 h-4 w-4" />
-        添加選中的學員 ({selectedStudentIds.length})
+        {isAddingStudents ? "正在新增學員..." : `添加選中的學員 (${selectedStudentIds.length})`}
       </Button>
     </div>
   )
@@ -336,7 +349,7 @@ function EnrolledStudentsSection({
   course: any
   courseId: string
   onOpenChange: (open: boolean) => void
-  closeCourse: (courseId: string) => void
+  closeCourse: (courseId: string) => Promise<void>
   getStudent: (studentId: string) => any
   removeStudentFromCourse: (courseId: string, studentId: string) => void
 }) {
@@ -370,20 +383,31 @@ function EmptyCourseView({
 }: { 
   courseId: string
   onOpenChange: (open: boolean) => void
-  closeCourse: (courseId: string) => void
+  closeCourse: (courseId: string) => Promise<void>
 }) {
+  const [isClosing, setIsClosing] = useState(false);
+  
+  const handleCloseCourse = async () => {
+    setIsClosing(true);
+    try {
+      await closeCourse(courseId);
+      onOpenChange(false);
+    } finally {
+      setIsClosing(false);
+    }
+  };
+  
   return (
     <div className="">
       <div className="p-2 pt-2 text-center text-sm text-muted-foreground">尚未有學員登記此日期</div>
       <Button 
         variant="outline"
-        onClick={() => {
-          closeCourse(courseId)
-          onOpenChange(false)
-        }} 
+        onClick={handleCloseCourse}
+        disabled={isClosing}
+        loading={isClosing}
         className="w-full transform transition-transform duration-200 hover:scale-[1.02] active:scale-95"
       >
-        趁現在關閉課程
+        {isClosing ? "正在關閉課程..." : "趁現在關閉課程"}
       </Button>
     </div>
   )
