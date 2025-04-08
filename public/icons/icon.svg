@@ -1,20 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- 背景圓形 -->
-  <circle cx="256" cy="256" r="256" fill="rgb(198, 207, 218)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- 背景為透明 -->
   
+  <!-- 粉紅色長方形，從左上延伸，圓角進一步減小 -->
+  <rect x="30" y="40" width="110" height="110" rx="20" ry="20" fill="#f15b80" style="mix-blend-mode: multiply;" />
   
-  <!-- B 字母 -->
-  <text
-    x="270"
-    y="400"
-    font-family="Arial"
-    font-size="400"
-    font-weight="bold"
-    fill="white"
-    text-anchor="middle"
-    dominant-baseline="middle"
-  >
-    B
-  </text>
+  <!-- 藍色長方形，從右下延伸，圓角進一步減小 -->
+  <rect x="60" y="70" width="110" height="110" rx="20" ry="20" fill="#50a6df" style="mix-blend-mode: multiply;" />
+  
+  <!-- 當重疊時，紫色區域自然形成，不需要另外添加 -->
 </svg> 
