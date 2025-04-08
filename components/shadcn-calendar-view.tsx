@@ -251,10 +251,10 @@ function NoCourseView({ selectedDate, onAddCourse }: { selectedDate: Date | unde
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="font-medium h-6">... 要上班嗎</h3>
+        <h3 className="font-medium h-6">準備上課囉...</h3>
         <div className="flex items-center text-sm text-muted-foreground">
           <Users className="h-4 w-4 mr-1" />
-          <span>{selectedDate ? "這一天沒有課程" : "請選擇一個日期"}</span>
+          <span>{selectedDate ? "-- 位學員" : "請選擇一個日期"}</span>
         </div>
       </div>
       {selectedDate && (
