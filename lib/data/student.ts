@@ -140,7 +140,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
                     console.error("Error adding student to Supabase:", error);
                 } else if (data) {
                     set((state) => ({
-                        students: [...state.students, data]
+                        students: [data, ...state.students]
                     }));
                 }
             } catch (e) {
@@ -155,7 +155,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
                 ig
             };
             set((state) => {
-                const updatedStudents = [...state.students, newStudent];
+                const updatedStudents = [newStudent, ...state.students];
                 saveStudentsToLocalStorage(updatedStudents);
                 return { students: updatedStudents };
             });
