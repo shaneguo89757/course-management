@@ -351,7 +351,7 @@ function EnrolledStudentsSection({
   onOpenChange: (open: boolean) => void
   closeCourse: (courseId: string) => Promise<void>
   getStudent: (studentId: string) => any
-  removeStudentFromCourse: (courseId: string, studentId: string) => void
+  removeStudentFromCourse: (courseId: string, studentId: string) => Promise<void>
 }) {
   if (course.students.length === 0) {
     return <EmptyCourseView courseId={courseId} onOpenChange={onOpenChange} closeCourse={closeCourse} />
@@ -425,7 +425,7 @@ function EnrolledStudentItem({
   courseId: string
   isLast: boolean
   getStudent: (studentId: string) => any
-  removeStudentFromCourse: (courseId: string, studentId: string) => void
+  removeStudentFromCourse: (courseId: string, studentId: string) => Promise<void>
 }) {
   const student = getStudent(studentId)
   
@@ -473,14 +473,27 @@ function RemoveStudentButton({
   student: any
   courseId: string
   studentId: string
-  removeStudentFromCourse: (courseId: string, studentId: string) => void
+  removeStudentFromCourse: (courseId: string, studentId: string) => Promise<void>
 }) {
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  const handleRemoveStudent = async () => {
+    setIsRemoving(true);
+    try {
+      await removeStudentFromCourse(courseId, studentId);
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
   return (
     <ConfirmDialog
       trigger={
         <Button
           variant="secondary"
           className="h-8 w-8 -my-2 p-0 hover:bg-destructive/10 hover:text-destructive"
+          disabled={isRemoving}
+          loading={isRemoving}
         >
           <LogOut className="h-4 w-4" />
           <span className="sr-only">移除學員</span>
@@ -488,8 +501,8 @@ function RemoveStudentButton({
       }
       title="確認移除學員"
       description="確定要將此學員從這堂課程中移除嗎？"
-      confirmText="移除"
-      onConfirm={() => removeStudentFromCourse(courseId, studentId)}
+      confirmText={isRemoving ? "正在移除..." : "移除"}
+      onConfirm={handleRemoveStudent}
     >
       <div className="mt-3">
         <StudentInfo student={student} />
