@@ -26,16 +26,22 @@ export function AddStudentDialog({ open, onOpenChange }: AddStudentDialogProps) 
   const { addStudent } = useStudents()
   const [name, setName] = useState("")
   const [ig, setIg] = useState("")
+  const [isAdding, setIsAdding] = useState(false)
   const focusAnchorRef = useRef<HTMLButtonElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) return
 
-    addStudent(name, ig.trim() || undefined)
-    setName("")
-    setIg("")
-    onOpenChange(false)
+    setIsAdding(true)
+    try {
+      await addStudent(name, ig.trim() || undefined)
+      setName("")
+      setIg("")
+      onOpenChange(false)
+    } finally {
+      setIsAdding(false)
+    }
   }
 
   return (
@@ -70,8 +76,8 @@ export function AddStudentDialog({ open, onOpenChange }: AddStudentDialogProps) 
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} >
               取消
             </Button>
-            <Button ref={focusAnchorRef} type="submit" disabled={!name.trim()}>
-              新增
+            <Button ref={focusAnchorRef} type="submit" disabled={!name.trim() || isAdding} loading={isAdding}>
+              {isAdding ? "正在新增..." : "新增"}
             </Button>
           </DialogFooter>
         </form>
