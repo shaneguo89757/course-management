@@ -5,6 +5,12 @@ import { v4 as uuidv4 } from "uuid";
 import { createAuthClient } from "@/utils/supabase/client";
 import { getSession, signIn } from "next-auth/react";
 
+const EXPIRED_FETCHED_TIME = 600000; // 10 minutes
+
+function getExpiredFetchedTime() {
+    return Date.now() + EXPIRED_FETCHED_TIME;
+}
+
 // 學生類型
 interface Student {
     id: string;
@@ -16,7 +22,7 @@ interface Student {
 // 學生狀態管理
 interface StudentState {
     students: Student[];
-    isInitialized: boolean;
+    expiredFetched: number;
     fetchStudents: () => Promise<void>; // 新增：從 Supabase 獲取學生
     addStudent: (name: string, ig?: string) => Promise<void>;
     updateStudent: (id: string, data: { name?: string; ig?: string }) => Promise<void>;
@@ -78,14 +84,15 @@ const isLoggedIn = async () => {
 // 創建學生狀態管理
 export const useStudentStore = create<StudentState>((set, get) => ({
     students: [], // 初始狀態為空，後續根據模式載入
-    isInitialized: false,
+    expiredFetched: 0,
     fetchStudents: async () => {
-        if (get().isInitialized) {
+        if (Date.now() < get().expiredFetched) {
             return;
         }
         
         const loggedIn = await isLoggedIn();
         if (loggedIn) {
+            set({ expiredFetched: getExpiredFetchedTime() });
             // 已登入：從 Supabase 獲取資料
             try {
                 const token = await getSupabaseJWT();
@@ -94,15 +101,16 @@ export const useStudentStore = create<StudentState>((set, get) => ({
                 if (error) {
                     console.error("Error fetching students from Supabase:", error);
                 } else {
-                    set({ students: data || [], isInitialized: true });
+                    set({ students: data });
                 }
             } catch (e) {
+                set({ expiredFetched: 0 });
                 console.error("Failed to fetch students from Supabase:", e);
             }
         } else {
             // 未登入：從 localStorage 獲取資料
             const localStudents = loadStudentsFromLocalStorage();
-            set({ students: localStudents, isInitialized: true });
+            set({ students: localStudents, expiredFetched: getExpiredFetchedTime() });
         }
     },
 

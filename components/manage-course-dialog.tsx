@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Check, Instagram, PlusCircle, Search, LogOut, X } from "lucide-react"
 import { useCourses, useStudents } from "@/lib/data/index"
 import { Button } from "@/components/ui/button"
@@ -22,6 +22,7 @@ interface ManageCourseDialogProps {
 export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCourseDialogProps) {
   const { findCourseById, removeStudentFromCourse, addMultipleStudentsToCourse, closeCourse } = useCourses()
   const { students, fetchStudents } = useStudents()
+  const hasFetched = useRef(false)
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([])
@@ -37,18 +38,21 @@ export function ManageCourseDialog({ courseId, open, onOpenChange }: ManageCours
         (student.ig && student.ig.toLowerCase().includes(searchTerm.toLowerCase()))),
   )
 
-
   // 清除選擇的學生
   useEffect(() => {
     if (!open) {
       setSelectedStudentIds([])
       setSearchTerm("")
+      hasFetched.current = false
     }
   }, [open])
 
   // 獲取學生資料
   useEffect(() => {
-    fetchStudents()
+    if (!hasFetched.current) {
+      hasFetched.current = true
+      fetchStudents()
+    }
   }, [])
 
   if (!course) return null
