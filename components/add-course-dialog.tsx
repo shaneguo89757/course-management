@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 
-import { useCourses } from "@/lib/data"
+import { useCourses } from "@/lib/data/index"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { format } from "date-fns";
 
 interface AddCourseDialogProps {
   date: Date
@@ -39,8 +40,7 @@ export function AddCourseDialog({ date, open, onOpenChange }: AddCourseDialogPro
     e.preventDefault()
     if (!title.trim()) return
 
-    const dateString = date.toISOString().split("T")[0]
-    addCourse(dateString, title)
+    addCourse(parseInt(format(date, "yyyyMMdd")), title)
     setTitle("")
     onOpenChange(false)
   }

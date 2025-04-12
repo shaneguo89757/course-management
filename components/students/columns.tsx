@@ -1,7 +1,8 @@
 "use client"
 
-import type { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal, Instagram } from "lucide-react"
+import type { ColumnDef, TableMeta } from "@tanstack/react-table"
+import { ArrowUpDown, MoreHorizontal, Instagram, Loader2 } from "lucide-react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -23,8 +24,30 @@ export type Student = {
   ig?: string
 }
 
+// 定義表格元數據類型
+interface StudentTableMeta extends TableMeta<Student> {
+  onEdit: (student: Student) => void
+  onToggleStatus: (id: string) => Promise<void>
+}
+
 export function useStudentColumns(): ColumnDef<Student>[] {
   const isMobile = useMediaQuery("(max-width: 640px)")
+  const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set())
+
+  const handleToggleStatus = async (studentId: string, onToggleStatus?: (id: string) => Promise<void>) => {
+    if (!onToggleStatus) return
+    
+    setLoadingIds(prev => new Set(prev).add(studentId))
+    try {
+      await onToggleStatus(studentId)
+    } finally {
+      setLoadingIds(prev => {
+        const next = new Set(prev)
+        next.delete(studentId)
+        return next
+      })
+    }
+  }
 
   const columns: ColumnDef<Student>[] = [
     {
@@ -40,10 +63,19 @@ export function useStudentColumns(): ColumnDef<Student>[] {
       cell: ({ row }) => {
         const name = row.getValue("name") as string
         const ig = row.original.ig
+        const isLoading = loadingIds.has(row.original.id)
 
         return (
           <div>
-            <div className="font-medium">{name}</div>
+            <div className="font-medium flex items-center gap-2">
+              {name}
+              {isLoading && (
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  <span>處理中...</span>
+                </div>
+              )}
+            </div>
             {isMobile && (
               <div className="text-xs text-muted-foreground flex items-center mt-1 min-h-[16px]">
                 <Instagram className="h-3 w-3 mr-1" />
@@ -87,6 +119,10 @@ export function useStudentColumns(): ColumnDef<Student>[] {
       id: "actions",
       cell: ({ row, table }) => {
         const student = row.original
+        const isLoading = loadingIds.has(student.id)
+        const meta = table.options.meta as StudentTableMeta | undefined
+        const onToggleStatus = meta?.onToggleStatus
+        const onEdit = meta?.onEdit
 
         return (
           <DropdownMenu>
@@ -99,10 +135,11 @@ export function useStudentColumns(): ColumnDef<Student>[] {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>操作</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => table.options.meta?.onEdit(student)}>編輯</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onEdit?.(student)}>編輯</DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => table.options.meta?.onToggleStatus(student.id)}
+                onClick={() => handleToggleStatus(student.id, onToggleStatus)}
                 className={student.active ? "text-destructive" : "text-primary"}
+                disabled={isLoading}
               >
                 {student.active ? "停用" : "啟用"}
               </DropdownMenuItem>

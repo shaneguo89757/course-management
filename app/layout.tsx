@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description: '管理課程預約和學生登記的應用程式',
   generator: 'v0.dev',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icons/icon.svg',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -34,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="zh-TW" className="h-full">
       <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="/icons/icon.svg" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="課程管理系統" />

@@ -1,27 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { PlusCircle } from "lucide-react"
+import { useState, useEffect } from "react"; // 添加 useEffect
+import { PlusCircle } from "lucide-react";
 
-import { AddStudentDialog } from "@/components/add-student-dialog"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { DashboardShell } from "@/components/dashboard-shell"
-import { EditStudentDialog } from "@/components/edit-student-dialog"
-import { useStudents } from "@/lib/data"
-import { Button } from "@/components/ui/button"
-import { type Student, useStudentColumns } from "@/components/students/columns"
-import { DataTable } from "@/components/students/data-table"
+import { AddStudentDialog } from "@/components/add-student-dialog";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardShell } from "@/components/dashboard-shell";
+import { EditStudentDialog } from "@/components/edit-student-dialog";
+import { useStudents } from "@/lib/data/index";
+import { Button } from "@/components/ui/button";
+import { type Student, useStudentColumns } from "@/components/students/columns";
+import { DataTable } from "@/components/students/data-table";
 
 export default function StudentsPage() {
-  const { students, toggleStudentStatus } = useStudents()
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const { students, toggleStudentStatus, fetchStudents } = useStudents(); // 添加 fetchStudents
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<{
-    id: string
-    name: string
-    ig?: string
-  } | null>(null)
+    id: string;
+    name: string;
+    ig?: string;
+  } | null>(null);
 
-  const columns = useStudentColumns()
+  const columns = useStudentColumns();
+
+  // 在頁面載入時獲取學生資料
+  useEffect(() => {
+    fetchStudents();
+  }, []);
 
   // 處理編輯學員
   const handleEditStudent = (student: Student) => {
@@ -29,8 +34,8 @@ export default function StudentsPage() {
       id: student.id,
       name: student.name,
       ig: student.ig,
-    })
-  }
+    });
+  };
 
   return (
     <DashboardShell>
@@ -50,11 +55,10 @@ export default function StudentsPage() {
           student={editingStudent}
           open={!!editingStudent}
           onOpenChange={(open) => {
-            if (!open) setEditingStudent(null)
+            if (!open) setEditingStudent(null);
           }}
         />
       )}
     </DashboardShell>
-  )
+  );
 }
-

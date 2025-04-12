@@ -7,7 +7,7 @@ import { register as registerServiceWorker } from "./register-sw";
 export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // 註冊 Service Worker
-    registerServiceWorker();
+    // registerServiceWorker();
   }, []);
 
   return <SessionProvider>{children}</SessionProvider>;

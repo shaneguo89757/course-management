@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 
-import { useStudents } from "@/lib/data"
+import { useStudents } from "@/lib/data/index"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -31,16 +31,22 @@ export function EditStudentDialog({ student, open, onOpenChange }: EditStudentDi
   const { updateStudent } = useStudents()
   const [name, setName] = useState(student.name)
   const [ig, setIg] = useState(student.ig || "")
+  const [isSaving, setIsSaving] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) return
 
-    updateStudent(student.id, {
-      name: name.trim(),
-      ig: ig.trim() || undefined,
-    })
-    onOpenChange(false)
+    setIsSaving(true)
+    try {
+      await updateStudent(student.id, {
+        name: name.trim(),
+        ig: ig.trim() || undefined,
+      })
+      onOpenChange(false)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -75,8 +81,8 @@ export function EditStudentDialog({ student, open, onOpenChange }: EditStudentDi
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               取消
             </Button>
-            <Button type="submit" disabled={!name.trim()}>
-              儲存
+            <Button type="submit" disabled={!name.trim() || isSaving} loading={isSaving}>
+              {isSaving ? "正在儲存..." : "儲存"}
             </Button>
           </DialogFooter>
         </form>
