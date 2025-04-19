@@ -1,5 +1,4 @@
 "use client"
-
 import ManageCourseView from "@/components/course/manage-course-view"
 import { DashboardShell } from "@/components/dashboard-shell"
 import { DashboardHeader } from "@/components/dashboard-header"

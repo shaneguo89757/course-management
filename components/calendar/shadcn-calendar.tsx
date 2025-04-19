@@ -39,7 +39,7 @@ export default function CalendarGrid({dayRecords, selectedDate, onSelectedDate, 
   }
 
   return (
-    <Card>
+    <Card className="w-full md:w-auto">
       <Calendar
         classNames={{
           root: "rounded-md select-none flex justify-center",

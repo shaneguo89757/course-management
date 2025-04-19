@@ -1,6 +1,6 @@
+"use client"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { DashboardShell } from "@/components/dashboard-shell"
-// import { ShadcnCalendarView } from "@/components/shadcn-calendar-view"
 import { ManageCalendarView } from "@/components/calendar/manage-calendar-view"
 
 export default function () {
