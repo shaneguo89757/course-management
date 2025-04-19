@@ -3,7 +3,8 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { Users, CalendarRange } from "lucide-react"
+import { Users } from "lucide-react"
+import { Calendar, Swatches } from '@mynaui/icons-react';
 
 import { cn } from "@/lib/utils"
 import { AuthNav } from "./auth-nav"
@@ -13,14 +14,19 @@ export function MainNav() {
 
   const navItems = [
     {
-      title: "課程行事曆",
+      title: "行事曆",
       href: "/shadcn-calendar",
-      icon: CalendarRange,
+      icon: Calendar,
     },
     {
-      title: "學員管理",
+      title: "學員",
       href: "/students",
       icon: Users,
+    },
+    {
+      title: "課程",
+      href: "/course-view",
+      icon: Swatches,
     },
   ]
 
