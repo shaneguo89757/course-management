@@ -1,4 +1,3 @@
-"use client"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { DashboardShell } from "@/components/dashboard-shell"
 import { ManageCalendarView } from "@/components/calendar/manage-calendar-view"
