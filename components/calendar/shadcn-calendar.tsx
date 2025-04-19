@@ -143,7 +143,7 @@ function workload(eventCount: number) {
     </div> */}
 
     {/* workload */}
-    <div className="absolute bottom-1 flex items-center gap-0.5 pointer-events-none">
+    <div className="absolute bottom-0.5 flex items-center gap-0.5 pointer-events-none">
       {workloadState}
     </div>
     </>
