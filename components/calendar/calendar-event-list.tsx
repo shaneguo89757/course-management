@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Swatches } from '@mynaui/icons-react';
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { useEffect, useState } from "react";
 
 interface CalendarEvent {
   id: number;
@@ -14,7 +15,7 @@ interface CalendarEvent {
   status: string;
 }
 
-const events: CalendarEvent[] = [
+const fakeEvents: CalendarEvent[] = [
   { id: 1, date: new Date("2024-01-01"), studentId: 1, courseId: 1, status: "active" },
   { id: 2, date: new Date("2024-01-02"), studentId: 2, courseId: 2, status: "active" },
   { id: 3, date: new Date("2024-01-03"), studentId: 3, courseId: 3, status: "active" },
@@ -26,7 +27,28 @@ const events: CalendarEvent[] = [
   { id: 9, date: new Date("2024-01-03"), studentId: 9, courseId: 3, status: "inactive" },
 ]
 
+const getFakeEvents = (date: Date | undefined) => {
+  return fakeEvents;
+}
+
 export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+
+  useEffect(() => {
+    setEvents(getFakeEvents(selectedDate));
+  }, [selectedDate]);
+
+  const getCourseName = (courseId: number) => {
+    return "課程" + courseId;
+  }
+
+  const getCategoryName = (courseId: number) => {
+    return "分類" + courseId;
+  }
+
+  const getStudentName = (studentId: number) => {
+    return "學生" + studentId;
+  }
   
   return (
     <Card>
@@ -40,7 +62,7 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
         <ul id="course-list" className="space-y-1.5">
           {events.map((event, index) => (
             <li key={event.id.toString()}>
-              <EventItem name={event.studentId.toString()} courseName={event.courseId.toString()} categoryName={event.courseId.toString()} activeState={event.status === "active"} onClick={() => {}} />
+              <EventItem name={getStudentName(event.studentId)} courseName={getCourseName(event.courseId)} categoryName={getCategoryName(event.courseId)} activeState={event.status === "active"} onClick={() => {}} />
               {index !== events.length - 1 && <Separator/>}
             </li>
           ))}
