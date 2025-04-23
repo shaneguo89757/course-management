@@ -6,6 +6,7 @@ import { Swatches } from '@mynaui/icons-react';
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useEffect, useState } from "react";
+import CalendarEventEditorDialog from "./calendar-event-editor-dialog";
 
 interface CalendarEvent {
   id: number;
@@ -52,10 +53,13 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
   
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-bold select-none flex items-center gap-2">
-          {selectedDate?formatDate(selectedDate, "yyyy-MM-dd"):"未選擇日期"}
-          <Badge variant="secondary" className="text-xs h-4 font-normal">7</Badge>
+      <CardHeader className="pb-2 pr-4 pl-5 pt-5">
+        <CardTitle className="text-lg font-bold select-none flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {selectedDate?formatDate(selectedDate, "yyyy-MM-dd"):"未選擇日期"}
+            <Badge variant="secondary" className="text-xs h-4 font-normal">7</Badge>
+          </div>
+          <CalendarEventEditorDialog defaultDate={selectedDate} />
         </CardTitle>
       </CardHeader>
       <CardContent className="max-h-[400px] overflow-y-auto scrollbar-thin px-4">

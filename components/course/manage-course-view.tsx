@@ -11,11 +11,10 @@ import { Course, CourseCategory, courseCategoriesFake, courseItemsFake, useCours
 import CreateCourseDialog from "./course-create-dialog";
 import CreateCourseCategoryDialog from "./course-category-create-dialog";
 
-function SelectItem({item, selectedItemId, onItemSelect, active = true}:{item:any, selectedItemId:number|null, onItemSelect:any, active?:boolean}) {
-
+function BadgeItem({item, selectedItemId, onItemSelect}:{item:any, selectedItemId:number|null, onItemSelect:any}) {
   return (
     <Badge
-      className={cn("cursor-pointer font-normal transition-all duration-200 active:scale-95", active ? undefined : 'bg-gray-200')}
+      className="h-6 cursor-pointer font-normal border-gray-900 transition-all duration-200 active:scale-95"
       variant={item.id === null || item.id === -1 || selectedItemId != item.id ? 'outline' : 'default'}
       onClick={() => onItemSelect(item)}
     >
@@ -24,45 +23,31 @@ function SelectItem({item, selectedItemId, onItemSelect, active = true}:{item:an
   )
 }
 
-function CourseCategoryList({courseCategories, selectedCategoryId, onCategorySelect}:{courseCategories:any[], selectedCategoryId:number|null, onCategorySelect:any}) {
+export function CourseCategoryList({courseCategories, selectedCategoryId, onCategorySelect}:{courseCategories:any[], selectedCategoryId:number|null, onCategorySelect:any}) {
   return (
-    <div className="course-category">
     <div className="course-category-list flex flex-wrap gap-2">
-      <SelectItem item={{id:-1, name:"+ Add"}} selectedItemId={selectedCategoryId} onItemSelect={onCategorySelect} />
-      <SelectItem item={{id:0, name:"All"}} selectedItemId={selectedCategoryId} onItemSelect={onCategorySelect} />
       {courseCategories.map((item, i) => (
-        <SelectItem key={i} item={item} selectedItemId={selectedCategoryId} onItemSelect={onCategorySelect} />
+        <BadgeItem key={i} item={item} selectedItemId={selectedCategoryId} onItemSelect={onCategorySelect} />
       ))}
-    </div>
     </div>
   )
 }
 
-function CourseList({courseItems, selectedCourseId, onCourseSelect}:{courseItems:any[]|undefined, selectedCourseId:number|null, onCourseSelect:any}) {
+export function CourseList({courseItems, selectedCourseId, onCourseSelect}:{courseItems:any[]|undefined, selectedCourseId:number|null, onCourseSelect:any}) {
   return (
-    <>
-    <div className="course-list">
       <div className="course-list-item-list flex flex-wrap gap-2">
-        {courseItems === undefined && (
-          <SelectItem item={{id:null, name:"先選擇課程類別"}} selectedItemId={null} onItemSelect={onCourseSelect} />
-        )}
-        
-        {courseItems && (
-          <SelectItem item={{id:-1, name:"+ Add"}} selectedItemId={selectedCourseId} onItemSelect={onCourseSelect} />
-        )}
-        
         {courseItems && courseItems.map((item, i) => (
-          <SelectItem key={i} item={item} selectedItemId={selectedCourseId} onItemSelect={onCourseSelect} />
+          <BadgeItem key={i} item={item} selectedItemId={selectedCourseId} onItemSelect={onCourseSelect} />
         ))}
       </div>
-    </div>
-    </>
   )
 }
 
 export default function ManageCourseView() {
+  // 資源.
+  const { courses, courseCategories, addCourseCategory, addCourse } = useCourseStore();
+
   // 課程分類
-  const { courses,courseCategories, addCourseCategory, addCourse } = useCourseStore();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number|null>(0);
 
   // 新增課程分類對話框
@@ -70,7 +55,7 @@ export default function ManageCourseView() {
 
   // 課程
   const [currentCourses, setCurrentCourses] = useState<Course[]|undefined>(undefined);
-  const [selecteCourseId, setSelectedCourseId] = useState<number|null>(null);
+  const [selectedCourseId, setSelectedCourseId] = useState<number|null>(null);
 
   // 新增課程對話框
   const [isCreateCourseDialogOpen, setIsCreateCourseDialogOpen] = useState<boolean>(false);
@@ -80,6 +65,10 @@ export default function ManageCourseView() {
     // -1: 新增課程分類
     if (item.id == -1) {
       setIsCreateCourseCategoryDialogOpen(true);
+      return;
+    }
+
+    if (item.id == selectedCategoryId) {
       return;
     }
     
@@ -126,22 +115,34 @@ export default function ManageCourseView() {
           <CardTitle>
             <div className="inline-block">
               <h4 className="text-[#98A2B3] text-base border-b border-[#EAECF0] pb-1 flex items-center gap-2">
-                <Swatches className="h-6 w-6" />
-                Course Categories & Items
+                <Swatches className="h-6 w-6" /> 課程分類
               </h4>
             </div>
           </CardTitle>
         </CardHeader>
         <CardContent className="pb-0">
-          <CourseCategoryList courseCategories={courseCategories} selectedCategoryId={selectedCategoryId} onCategorySelect={handleCategorySelect} />
+          <CourseCategoryList 
+            courseCategories={[{id:-1, name:"+Add"}, {id:0, name:"All"}, ...courseCategories]} 
+            selectedCategoryId={selectedCategoryId} 
+            onCategorySelect={handleCategorySelect} 
+          />
         </CardContent>
-
+        <div className="p-2" />
         <CardHeader className="text-lg pb-3 pt-2">
-          <CardTitle className="text-[#98A2B3] text-base border-b pb-1 flex items-center gap-2">
+          <CardTitle>
+            <div className="inline-block">
+              <h4 className="text-[#98A2B3] text-base border-b border-[#EAECF0] pb-1 flex items-center gap-2">
+                <Swatches className="h-6 w-6" /> 課程名稱
+              </h4>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CourseList courseItems={currentCourses} selectedCourseId={selecteCourseId} onCourseSelect={handleCourseSelect} />
+          <CourseList 
+            courseItems={currentCourses === undefined ? [{id:null, name:"先選擇課程類別"}] : [ {id:-1, name:"+ Add"}, ...currentCourses]}
+            selectedCourseId={selectedCourseId}
+            onCourseSelect={handleCourseSelect}
+          />
         </CardContent>
       </Card>
       </div>
