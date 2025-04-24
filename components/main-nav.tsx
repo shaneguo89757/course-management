@@ -6,6 +6,13 @@ import { usePathname } from "next/navigation"
 import { Users } from "lucide-react"
 import { Calendar, Swatches } from '@mynaui/icons-react';
 
+import { IoCalendarOutline, IoCalendar } from "react-icons/io5";
+import { IoFlowerOutline } from "react-icons/io5";
+import { IoPersonCircleOutline } from "react-icons/io5";
+import { IoSchool } from "react-icons/io5";
+import { IoSearchCircleSharp } from "react-icons/io5";
+import { PiAddressBookTabsLight, PiAddressBookTabsFill } from "react-icons/pi";
+
 import { cn } from "@/lib/utils"
 import { AuthNav } from "./auth-nav"
 
@@ -16,17 +23,17 @@ export function MainNav() {
     {
       title: "行事曆",
       href: "/shadcn-calendar",
-      icon: Calendar,
+      icon: ()=> <IoCalendarOutline size={20}/>,
     },
     {
       title: "學員",
       href: "/students",
-      icon: Users,
+      icon: ()=> <PiAddressBookTabsLight size={25}/>,
     },
     {
       title: "課程",
       href: "/course-view",
-      icon: Swatches,
+      icon: ()=> <IoSchool size={20}/>,
     },
   ]
 
@@ -52,7 +59,7 @@ export function MainNav() {
                 pathname === item.href ? "text-primary font-bold underline" : "text-muted-foreground",
               )}
             >
-              <item.icon className="h-4 w-4" />
+              <item.icon />
               <span>{item.title}</span>
             </Link>
           ))}

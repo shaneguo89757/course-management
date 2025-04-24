@@ -91,10 +91,13 @@ function EventItem({ name, courseName, categoryName, activeState, onClick }: { n
         {/* 名稱 */}
         <span className="flex h-8 items-center gap-1 text-lg font-semibold">{name}</span>
         {/* 課程名稱 */}
-        <span className="text-xs h-4 pb-0.5 font-normal text-muted-foreground flex items-center gap-1">
-          <Swatches />
+          
+        <span className="flex items-center gap-1">
+          <Swatches className="font-bold"/>
+          <div className="text-xs h-4 pb-0.5 font-normal text-muted-foreground flex items-center gap-1">
           <Badge variant="secondary" className="h-4 text-xs font-normal">{courseName}</Badge>
           <Badge variant="outline" className="h-4 text-xs font-normal">{categoryName}</Badge>
+          </div>
         </span>
       </div>
     </Button>

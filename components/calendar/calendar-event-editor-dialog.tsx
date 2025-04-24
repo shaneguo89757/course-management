@@ -15,9 +15,8 @@ import { Card, CardContent } from "../ui/card";
 import { CourseCategoryList, CourseList } from "../course/manage-course-view";
 import { Course, CourseCategory, useCourseStore } from "../course/type";
 import { useEffect, useState } from "react";
-import { PlusIcon } from "../icons/PlusIcon";
-import { FlowerIcon } from "../icons/FlowerIcon";
-import { RoseIcon } from "../icons/RoseIcon";
+import { IoCalendarNumberOutline } from "react-icons/io5";
+import { IoCreate } from "react-icons/io5";
 
 export default function CalendarEventEditorDialog({ defaultDate }: { defaultDate?: Date }) {
   const [open, setOpen] = useState(false);
@@ -62,11 +61,11 @@ export default function CalendarEventEditorDialog({ defaultDate }: { defaultDate
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-8">安排學員</Button>
+        <Button variant="outline" className="h-8"> 安排學員</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Calendar Event</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">安排學員</DialogTitle>
         </DialogHeader>
         
         {/* Body */}
@@ -93,7 +92,7 @@ function EventDateSection({ selectedDate }: { selectedDate: Date }) {
     <div>
       <div className="inline-block mb-2">
         <h4 className="event-editor-title">
-          <Calendar className="h-6 w-6" /> 日期：
+          <IoCalendarNumberOutline className="h-6 w-6" /> 日期：
         </h4>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -166,7 +165,7 @@ function CourseCategorySection({onCourseSelectId}:{onCourseSelectId:(id:number|n
       <div>
         <div className="inline-block mb-2">
           <h4 className="event-editor-title">
-            <Swatches className="h-6 w-6" /> 課程名稱：
+            <Swatches /> 課程名稱：
           </h4>
         </div>
         <CourseList 
