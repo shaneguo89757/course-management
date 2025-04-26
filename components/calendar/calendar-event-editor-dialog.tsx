@@ -158,6 +158,7 @@ function StudentInfoSection({onStudentSelectId}:{onStudentSelectId:(id:number|nu
     setSearchResults([]);
   }
 
+  const showSelectedStudent = selectedStudent != null && !isSwitching;
   const openSearchView = isSwitching || !selectedStudent;
 
   return (
@@ -167,8 +168,8 @@ function StudentInfoSection({onStudentSelectId}:{onStudentSelectId:(id:number|nu
           <User className="h-6 w-6" />學生：
         </h4>
       </div>
-          {selectedStudent && <StudentInfoContent selectedStudent={selectedStudent} onSwitch={()=>setIsSwitching(true)} />}
-          {openSearchView && <StudentSearchContent searchResults={searchResults} onSearch={setSearchQuery} onPick={handlePickSearchResult} />}
+      {showSelectedStudent && <StudentInfoContent selectedStudent={selectedStudent} onSwitch={()=>setIsSwitching(true)} />}
+      {openSearchView && <StudentSearchContent searchResults={searchResults} onSearch={setSearchQuery} onPick={handlePickSearchResult} />}
     </div>
   )
 }
@@ -192,6 +193,17 @@ function StudentInfoContent({selectedStudent, onSwitch}:{selectedStudent:Student
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 function StudentSearchContent({searchResults, onSearch, onPick}:{searchResults:Student[], onSearch:(query:string)=>void, onPick:(student:Student)=>void}) {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (query:string) => {
+    if (query.trim() === "") {
+      return; 
+    }
+    setSearchQuery(query);
+    onSearch(query);
+  }
+
+  const hasInput = searchQuery.trim() !== ""; 
 
   return (
     <div className="space-y-2">
@@ -199,10 +211,10 @@ function StudentSearchContent({searchResults, onSearch, onPick}:{searchResults:S
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="搜尋學生姓名"
-          onChange={(e) => onSearch(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
           className="pl-8"
         />
-        <p className="absolute right-2 top-2.5 text-sm text-muted-foreground">搜尋結果：{searchResults.length}</p>
+        { hasInput && <p className="absolute right-2 top-2.5 text-sm text-muted-foreground">搜尋結果：{searchResults.length}</p>}
       </div>
       {searchResults.length > 0 && (
         <div className="max-h-40 overflow-y-auto space-y-1 border rounded-md">
