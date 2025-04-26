@@ -2,35 +2,22 @@ import { Search, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { EventStudent, fakeEventStudents } from "../type";
 
-interface Student {
-  id: number;
-  name: string;
-}
 
-const STUDENTS: Student[] = [
-  { id: 10, name: "張三1" },
-  { id: 11, name: "李四1" },
-  { id: 12, name: "王五1" },
-  { id: 13, name: "張三1" },
-  { id: 14, name: "李四1" },
-  { id: 15, name: "王五1" },
-  { id: 16, name: "張三1" },
-  { id: 17, name: "李四1" },
-  { id: 18, name: "王五1" },
-  { id: 19, name: "張三1" },
-  { id: 20, name: "李四1" },
-  { id: 21, name: "王五1" }
-];
 
 export default function StudentInfoSection({
-  onStudentSelectId
+  initStudentId,
+  onStudentSelectId,
+  disabled = false
 }: {
-  onStudentSelectId: (id: number | null) => void;
+  initStudentId: number | null;
+  onStudentSelectId?: (id: number | null) => void;
+  disabled?: boolean;
 }) {
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<EventStudent | null>(fakeEventStudents.find(student => student.id === initStudentId) ?? null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Student[]>([]);
+  const [searchResults, setSearchResults] = useState<EventStudent[]>([]);
   const [isSwitching, setIsSwitching] = useState(false);
 
   // Update search results when search query changes
@@ -40,22 +27,26 @@ export default function StudentInfoSection({
       return;
     }
 
-    const results = STUDENTS.filter((student) =>
+    const results = fakeEventStudents.filter((student) =>
       student.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setSearchResults(results);
   }, [searchQuery]);
 
-  const handlePickSearchResult = (student: Student) => {
+  const handlePickSearchResult = (student: EventStudent) => {
+    if (disabled) {
+      return;
+    }
+
     setSelectedStudent(student);
     setIsSwitching(false);
-    onStudentSelectId(student.id);
+    onStudentSelectId?.(student.id);
     setSearchQuery("");
     setSearchResults([]);
   };
 
   const showSelectedStudent = selectedStudent != null && !isSwitching;
-  const openSearchView = isSwitching || !selectedStudent;
+  const openSearchView = !disabled && (isSwitching || !selectedStudent);
 
   return (
     <div>
@@ -69,6 +60,7 @@ export default function StudentInfoSection({
         <StudentInfoContent
           selectedStudent={selectedStudent}
           onSwitch={() => setIsSwitching(true)}
+          disabled={disabled}
         />
       )}
       {openSearchView && (
@@ -84,10 +76,12 @@ export default function StudentInfoSection({
 
 function StudentInfoContent({
   selectedStudent,
-  onSwitch
+  onSwitch,
+  disabled
 }: {
-  selectedStudent: Student;
+  selectedStudent: EventStudent;
   onSwitch: () => void;
+  disabled: boolean;
 }) {
   return (
     <div className="space-y-2">
@@ -95,9 +89,11 @@ function StudentInfoContent({
         <span className="font-medium border-gray-600 border rounded-md px-2 py-1">
           {selectedStudent.name}
         </span>
-        <Button variant="default" size="sm" onClick={onSwitch}>
-          替換
-        </Button>
+        {!disabled && (
+          <Button variant="default" size="sm" onClick={onSwitch}>
+            替換
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -108,9 +104,9 @@ function StudentSearchContent({
   onSearch,
   onPick
 }: {
-  searchResults: Student[];
+  searchResults: EventStudent[];
   onSearch: (query: string) => void;
-  onPick: (student: Student) => void;
+  onPick: (student: EventStudent) => void;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
 

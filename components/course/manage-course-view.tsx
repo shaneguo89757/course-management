@@ -11,33 +11,33 @@ import { Course, CourseCategory, courseCategoriesFake, courseItemsFake, useCours
 import CreateCourseDialog from "./course-create-dialog";
 import CreateCourseCategoryDialog from "./course-category-create-dialog";
 
-function BadgeItem({item, selectedItemId, onItemSelect}:{item:any, selectedItemId:number|null, onItemSelect:any}) {
+function BadgeItem({item, selectedItemId, onItemSelect, disabled = false}:{item:any, selectedItemId:number|null, onItemSelect:any, disabled:boolean}) {
   return (
     <Badge
       className="h-6 cursor-pointer font-normal border-gray-900 transition-all duration-200 active:scale-95"
       variant={item.id === null || item.id === -1 || selectedItemId != item.id ? 'outline' : 'default'}
-      onClick={() => onItemSelect(item)}
+      onClick={() => {disabled ? null : onItemSelect(item)}}
     >
       {item.name}
     </Badge>
   )
 }
 
-export function CourseCategoryList({courseCategories, selectedCategoryId, onCategorySelect}:{courseCategories:any[], selectedCategoryId:number|null, onCategorySelect:any}) {
+export function CourseCategoryList({courseCategories, selectedCategoryId, onCategorySelect, disabled = false}:{courseCategories:any[], selectedCategoryId:number|null, onCategorySelect:any, disabled:boolean}) {
   return (
     <div className="course-category-list flex flex-wrap gap-2">
       {courseCategories.map((item, i) => (
-        <BadgeItem key={i} item={item} selectedItemId={selectedCategoryId} onItemSelect={onCategorySelect} />
+        <BadgeItem key={i} item={item} selectedItemId={selectedCategoryId} onItemSelect={onCategorySelect} disabled={disabled} />
       ))}
     </div>
   )
 }
 
-export function CourseList({courseItems, selectedCourseId, onCourseSelect}:{courseItems:any[]|undefined, selectedCourseId:number|null, onCourseSelect:any}) {
+export function CourseList({courseItems, selectedCourseId, onCourseSelect, disabled = false}:{courseItems:any[]|undefined, selectedCourseId:number|null, onCourseSelect:any, disabled:boolean}) {
   return (
       <div className="course-list-item-list flex flex-wrap gap-2">
         {courseItems && courseItems.map((item, i) => (
-          <BadgeItem key={i} item={item} selectedItemId={selectedCourseId} onItemSelect={onCourseSelect} />
+          <BadgeItem key={i} item={item} selectedItemId={selectedCourseId} onItemSelect={onCourseSelect} disabled={disabled} />
         ))}
       </div>
   )

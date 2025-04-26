@@ -4,18 +4,24 @@ import { useEffect, useState } from "react";
 import { CourseCategoryList, CourseList } from "@/components/course/manage-course-view";
 
 export default function CourseCategorySection({
-  onCourseSelectId
+  onCourseSelectId,
+  initialCourseId,
+  disabled = false
 }: {
   onCourseSelectId: (id: number | null) => void;
+  initialCourseId?: number | null;
+  disabled?: boolean;
 }) {
   // 課程分類
   const { courses, courseCategories } = useCourseStore();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    courseCategories[0].id
+    initialCourseId 
+      ? courses.find(course => course.id === initialCourseId)?.categoryId ?? courseCategories[0].id
+      : courseCategories[0].id
   );
 
   const [currentCourses, setCurrentCourses] = useState<Course[] | undefined>(undefined);
-  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(initialCourseId ?? null);
 
   const handleCategorySelect = (item: CourseCategory) => {
     if (item.id == selectedCategoryId) return;
@@ -25,7 +31,7 @@ export default function CourseCategorySection({
 
   useEffect(() => {
     setCurrentCourses(courses.filter((item) => item.categoryId === selectedCategoryId));
-  }, [selectedCategoryId]);
+  }, [selectedCategoryId, courses]);
 
   const handleCourseSelect = (item: Course) => {
     if (item.id == selectedCourseId) return;
@@ -45,6 +51,7 @@ export default function CourseCategorySection({
           courseCategories={courseCategories}
           selectedCategoryId={selectedCategoryId}
           onCategorySelect={handleCategorySelect}
+          disabled={disabled}
         />
       </div>
 
@@ -60,6 +67,7 @@ export default function CourseCategorySection({
           }
           selectedCourseId={selectedCourseId}
           onCourseSelect={handleCourseSelect}
+          disabled={disabled}
         />
       </div>
     </div>

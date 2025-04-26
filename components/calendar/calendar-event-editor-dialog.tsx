@@ -2,37 +2,42 @@ import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useEffect, useState } from "react";
-import { CalendarEvent } from "./type";
+import { CalendarEvent, fakeEventStudents } from "./type";
 import EventDateSection from "./components/event-date-section";
 import StudentInfoSection from "./components/student-info-section";
 import CourseCategorySection from "./components/course-category-section";
+import { useCourseStore } from "../course/type";
 
-export default function CalendarEventCreatorDialog({ defaultDate, onSubmit }: { defaultDate?: Date, onSubmit:(event:CalendarEvent)=>Promise<void> }) {
-  const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(defaultDate!);
-  const [selectedStudentId, setSelectedStudentId] = useState<number|null>(null);
-  const [selectedCourseId, setSelectedCourseId] = useState<number|null>(null);
+export default function CalendarEventEditorDialog({ 
+  event, 
+  onSubmit,
+  open,
+  onOpenChange
+}: { 
+  event: CalendarEvent, 
+  onSubmit:(event:CalendarEvent)=>Promise<void>,
+  open: boolean,
+  onOpenChange: (open: boolean) => void
+}) {
+  const {courses} = useCourseStore();
+
+  const [selectedDate, setSelectedDate] = useState<Date>(event.date);
+  const [selectedStudentId, setSelectedStudentId] = useState<number|null>(event.studentId);
+  const [selectedCourseId, setSelectedCourseId] = useState<number|null>(event.courseId);
   const [isSaving, setIsSaving] = useState(false);
-  const disableToSave = selectedCourseId == null || selectedStudentId == null;
 
-  // 當 dialog 關閉時重置表單
-  useEffect(() => {
-    if (open) {
-      setSelectedDate(defaultDate!);
-      setSelectedCourseId(null);
-      setSelectedStudentId(null);
-    }
-  }, [open]);
+  const disableToSave = selectedCourseId == null || selectedStudentId == null;
 
   // 處理取消按鈕點擊
   const handleCancel = () => {
-    setOpen(false);
+    onOpenChange(false);
   };
 
   // 處理確認按鈕點擊
@@ -52,25 +57,22 @@ export default function CalendarEventCreatorDialog({ defaultDate, onSubmit }: { 
     } finally {
       setIsSaving(false);
       // 成功後關閉 dialog
-      setOpen(false);
+      onOpenChange(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="h-8"> 安排學員</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">安排學員</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">編輯課堂行程</DialogTitle>
         </DialogHeader>
         
         {/* Body */}
         <div className="grid gap-4 py-4">
           <EventDateSection selectedDate={selectedDate} />
-          <StudentInfoSection initStudentId={null} onStudentSelectId={setSelectedStudentId} />
-          <CourseCategorySection onCourseSelectId={setSelectedCourseId} />
+          <StudentInfoSection initStudentId={selectedStudentId} onStudentSelectId={setSelectedStudentId} disabled={true}/>
+          <CourseCategorySection initialCourseId={selectedCourseId} onCourseSelectId={setSelectedCourseId} disabled={true}/>
         </div>
         
         {/* Footer */}

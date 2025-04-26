@@ -6,43 +6,31 @@ import { Swatches } from '@mynaui/icons-react';
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useEffect, useState } from "react";
-import { CalendarEvent } from "./type";
+import { CalendarEvent, fakeEvents, fakeEventStudents } from "./type";
+import { useCourseStore } from "@/components/course/type";
 import CalendarEventCreatorDialog from "./calendar-event-creator-dialog";
+import CalendarEventEditorDialog from "./calendar-event-editor-dialog";
 
-
-const fakeEvents: CalendarEvent[] = [
-  { id: 1, date: new Date("2024-01-01"), studentId: 1, courseId: 1, isCanceled: false },
-  { id: 2, date: new Date("2024-01-02"), studentId: 2, courseId: 2, isCanceled: false },
-  { id: 3, date: new Date("2024-01-03"), studentId: 3, courseId: 3, isCanceled: false },
-  { id: 4, date: new Date("2024-01-01"), studentId: 4, courseId: 1, isCanceled: false },
-  { id: 5, date: new Date("2024-01-02"), studentId: 5, courseId: 2, isCanceled: false },
-  { id: 6, date: new Date("2024-01-03"), studentId: 6, courseId: 3, isCanceled: true },
-  { id: 7, date: new Date("2024-01-03"), studentId: 7, courseId: 3, isCanceled: true },
-  { id: 8, date: new Date("2024-01-03"), studentId: 8, courseId: 3, isCanceled: true },
-  { id: 9, date: new Date("2024-01-03"), studentId: 9, courseId: 3, isCanceled: true },
-]
-
-const getFakeEvents = (date: Date | undefined) => {
-  return fakeEvents;
-}
 
 export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
+  const {courses, courseCategories} = useCourseStore();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
   useEffect(() => {
-    setEvents(getFakeEvents(selectedDate));
+    setEvents(fakeEvents);
   }, [selectedDate]);
 
   const getCourseName = (courseId: number) => {
-    return "課程" + courseId;
+    return courses.find(course => course.id === courseId)?.name ?? "課程" + courseId;
   }
 
   const getCategoryName = (courseId: number) => {
-    return "分類" + courseId;
+    return courseCategories.find(category => category.id === courseId)?.name ?? "分類" + courseId;
   }
 
   const getStudentName = (studentId: number) => {
-    return "學生" + studentId;
+    return fakeEventStudents.find(student => student.id === studentId)?.name ?? "學生" + studentId;
   }
 
   const handleEventSubmit = async (event: CalendarEvent) => {
@@ -55,6 +43,14 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
       }
       return Number(a.id) - Number(b.id);
     }));
+  }
+
+  const handleEventUpdate = async (updatedEvent: CalendarEvent) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setEvents(events.map(event => 
+      event.id === updatedEvent.id ? updatedEvent : event
+    ));
+    setSelectedEvent(null);
   }
   
   return (
@@ -77,18 +73,32 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
                 courseName={getCourseName(event.courseId)}
                 categoryName={getCategoryName(event.courseId)}
                 activeState={!event.isCanceled}
-                onClick={() => {}}
+                onClick={() => setSelectedEvent(event)}
               />
               {index !== events.length - 1 && <Separator/>}
             </li>
           ))}
         </ul>
       </CardContent>
+      {selectedEvent && (
+        <CalendarEventEditorDialog 
+          event={selectedEvent} 
+          onSubmit={handleEventUpdate}
+          open={!!selectedEvent}
+          onOpenChange={(open) => !open && setSelectedEvent(null)}
+        />
+      )}
     </Card>
   );
 }
 
-function EventItem({ name, courseName, categoryName, activeState, onClick }: { name: string, courseName: string, categoryName: string, activeState: boolean, onClick: () => void}) {
+function EventItem({ name, courseName, categoryName, activeState, onClick }: { 
+  name: string, 
+  courseName: string, 
+  categoryName: string, 
+  activeState: boolean, 
+  onClick: () => void
+}) {
   return (
     <Button 
       variant="ghost"
