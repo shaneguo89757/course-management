@@ -4,8 +4,8 @@ import { useState, useEffect } from "react"; // 添加 useEffect
 import { PlusCircle } from "lucide-react";
 
 import { AddStudentDialog } from "@/components/add-student-dialog";
-import { DashboardHeader } from "@/components/dashboard-header";
-import { DashboardShell } from "@/components/dashboard-shell";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { EditStudentDialog } from "@/components/edit-student-dialog";
 import { useStudents } from "@/lib/data/index";
 import { Button } from "@/components/ui/button";

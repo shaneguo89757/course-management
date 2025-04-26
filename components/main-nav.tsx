@@ -1,8 +1,6 @@
 "use client"
 
-import Link from "next/link"
 import Image from "next/image"
-import { usePathname } from "next/navigation"
 import { Users } from "lucide-react"
 import { Calendar, Swatches } from '@mynaui/icons-react';
 
@@ -16,9 +14,12 @@ import { PiAddressBookTabsLight, PiAddressBookTabsFill } from "react-icons/pi";
 import { cn } from "@/lib/utils"
 import { AuthNav } from "./auth-nav"
 
-export function MainNav() {
-  const pathname = usePathname()
+interface MainNavProps {
+  activeNav: string;
+  onNavChange: (nav: string) => void;
+}
 
+export function MainNav({ activeNav, onNavChange }: MainNavProps) {
   const navItems = [
     {
       title: "行事曆",
@@ -51,17 +52,17 @@ export function MainNav() {
         </div>
         <div className="flex items-center space-x-4 ml-auto">
           {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
+            <button
+              key={item.title}
+              onClick={() => onNavChange(item.title)}
               className={cn(
                 "flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary",
-                pathname === item.href ? "text-primary font-bold underline" : "text-muted-foreground",
+                activeNav === item.title ? "text-primary font-bold underline" : "text-muted-foreground",
               )}
             >
               <item.icon />
               <span>{item.title}</span>
-            </Link>
+            </button>
           ))}
           <AuthNav />
         </div>
