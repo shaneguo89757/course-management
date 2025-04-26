@@ -1,6 +1,6 @@
 import ManageCourseView from "@/components/course/manage-course-view";
-import { DashboardShell } from "@/components/dashboard-shell";
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 
 export default function () {
   return (

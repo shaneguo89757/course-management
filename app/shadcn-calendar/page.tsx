@@ -1,5 +1,5 @@
-import { DashboardHeader } from "@/components/dashboard-header"
-import { DashboardShell } from "@/components/dashboard-shell"
+import { DashboardHeader } from "@/components/dashboard/dashboard-header"
+import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { ManageCalendarView } from "@/components/calendar/manage-calendar-view"
 
 export default function () {
