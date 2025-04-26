@@ -91,4 +91,7 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  .event-editor-title {
+    @apply text-lg border-b border-black flex items-center gap-1 font-bold;
+  }
 }
