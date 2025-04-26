@@ -6,8 +6,8 @@ import { Swatches } from '@mynaui/icons-react';
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useEffect, useState } from "react";
-import CalendarEventEditorDialog from "./calendar-event-editor-dialog";
 import { CalendarEvent } from "./type";
+import CalendarEventCreatorDialog from "./calendar-event-creator-dialog";
 
 
 const fakeEvents: CalendarEvent[] = [
@@ -65,7 +65,7 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
             {selectedDate?formatDate(selectedDate, "yyyy-MM-dd"):"未選擇日期"}
             <Badge variant="secondary" className="text-xs h-4 font-normal">7</Badge>
           </div>
-          <CalendarEventEditorDialog defaultDate={selectedDate} onSubmit={handleEventSubmit} />
+          <CalendarEventCreatorDialog defaultDate={selectedDate} onSubmit={handleEventSubmit} />
         </CardTitle>
       </CardHeader>
       <CardContent className="max-h-[400px] overflow-y-auto scrollbar-thin px-4">
