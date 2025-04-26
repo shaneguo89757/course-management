@@ -17,19 +17,22 @@ import { Course, CourseCategory, useCourseStore } from "../course/type";
 import { useEffect, useState } from "react";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import { IoCreate } from "react-icons/io5";
+import { CalendarEvent } from "./type";
 
-export default function CalendarEventEditorDialog({ defaultDate }: { defaultDate?: Date }) {
+export default function CalendarEventEditorDialog({ defaultDate, onSubmit }: { defaultDate?: Date, onSubmit:(event:CalendarEvent)=>Promise<void> }) {
   const [open, setOpen] = useState(false);
-  const [selectedCourseId, setSelectedCourseId] = useState<number|null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(defaultDate!);
-  
-  const disableToSave = selectedCourseId == null;
+  const [selectedStudentId, setSelectedStudentId] = useState<number|null>(null);
+  const [selectedCourseId, setSelectedCourseId] = useState<number|null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const disableToSave = selectedCourseId == null || selectedStudentId == null;
 
   // 當 dialog 關閉時重置表單
   useEffect(() => {
     if (open) {
       setSelectedDate(defaultDate!);
       setSelectedCourseId(null);
+      setSelectedStudentId(null);
     }
   }, [open]);
 
@@ -43,18 +46,19 @@ export default function CalendarEventEditorDialog({ defaultDate }: { defaultDate
     if (disableToSave) return;
     
     try {
-      // TODO: 在這裡添加您的確認邏輯
-      // 例如：保存事件到資料庫
-      console.log('Saving event:', {
+      setIsSaving(true);
+      await onSubmit({
+        id: Date.now(),
         date: selectedDate,
-        courseId: selectedCourseId
+        studentId: selectedStudentId,
+        courseId: selectedCourseId,
       });
-      
-      // 成功後關閉 dialog
-      setOpen(false);
     } catch (error) {
       console.error('Error saving event:', error);
-      // 可以在這裡添加錯誤處理邏輯
+    } finally {
+      setIsSaving(false);
+      // 成功後關閉 dialog
+      setOpen(false);
     }
   };
 
@@ -71,7 +75,7 @@ export default function CalendarEventEditorDialog({ defaultDate }: { defaultDate
         {/* Body */}
         <div className="grid gap-4 py-4">
           <EventDateSection selectedDate={selectedDate} />
-          <StudentInfoSection />
+          <StudentInfoSection onStudentSelectId={setSelectedStudentId} />
           <CourseCategorySection onCourseSelectId={setSelectedCourseId} />
         </div>
         
@@ -79,7 +83,7 @@ export default function CalendarEventEditorDialog({ defaultDate }: { defaultDate
         <DialogFooter className="flex justify-end gap-2">
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={handleCancel}>取消</Button>
-            <Button type="submit" disabled={disableToSave} onClick={handleConfirm}>確認</Button>
+            <Button type="submit" disabled={disableToSave} onClick={handleConfirm} loading={isSaving}>確認</Button>
           </div>
         </DialogFooter>
       </DialogContent>
@@ -107,18 +111,112 @@ function EventDateSection({ selectedDate }: { selectedDate: Date }) {
   )
 }
 
-function StudentInfoSection() {
+interface Student {
+  id: number;
+  name: string;
+}
+
+const STUDENTS: Student[] = [
+  { id: 10, name: "張三1" },
+  { id: 11, name: "李四1" },
+  { id: 12, name: "王五1" },
+  { id: 13, name: "張三1" },
+  { id: 14, name: "李四1" },
+  { id: 15, name: "王五1" },
+  { id: 16, name: "張三1" },
+  { id: 17, name: "李四1" },
+  { id: 18, name: "王五1" },
+  { id: 19, name: "張三1" },
+  { id: 20, name: "李四1" },
+  { id: 21, name: "王五1" }
+];
+
+function StudentInfoSection({onStudentSelectId}:{onStudentSelectId:(id:number|null)=>void}) {
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Student[]>([]);
+  const [isSwitching, setIsSwitching] = useState(false);
+
+  // Update search results when search query changes
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    const results = STUDENTS.filter(student =>
+      student.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setSearchResults(results);
+  }, [searchQuery]);
+
+  const handlePickSearchResult = (student:Student) => {
+    setSelectedStudent(student);
+    setIsSwitching(false);
+    onStudentSelectId(student.id);
+    setSearchQuery("");
+    setSearchResults([]);
+  }
+
+  const openSearchView = isSwitching || !selectedStudent;
+
   return (
     <div>
       <div className="inline-block mb-2">
         <h4 className="event-editor-title">
-          <User className="h-6 w-6" /> 學生：
+          <User className="h-6 w-6" />學生：
         </h4>
       </div>
-      <Card>
-        <CardContent className="p-4 space-y-4">
-        </CardContent>
-      </Card>
+          {selectedStudent && <StudentInfoContent selectedStudent={selectedStudent} onSwitch={()=>setIsSwitching(true)} />}
+          {openSearchView && <StudentSearchContent searchResults={searchResults} onSearch={setSearchQuery} onPick={handlePickSearchResult} />}
+    </div>
+  )
+}
+
+function StudentInfoContent({selectedStudent, onSwitch}:{selectedStudent:Student, onSwitch:()=>void}) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="font-medium border-gray-600 border rounded-md px-2 py-1">{selectedStudent.name}</span>
+        <Button
+          variant="default"
+          size="sm"
+          onClick={onSwitch}
+        >
+          替換
+        </Button>
+      </div>
+    </div>
+  )
+}
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+function StudentSearchContent({searchResults, onSearch, onPick}:{searchResults:Student[], onSearch:(query:string)=>void, onPick:(student:Student)=>void}) {
+
+  return (
+    <div className="space-y-2">
+      <div className="relative">
+        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="搜尋學生姓名"
+          onChange={(e) => onSearch(e.target.value)}
+          className="pl-8"
+        />
+        <p className="absolute right-2 top-2.5 text-sm text-muted-foreground">搜尋結果：{searchResults.length}</p>
+      </div>
+      {searchResults.length > 0 && (
+        <div className="max-h-40 overflow-y-auto space-y-1 border rounded-md">
+          {searchResults.map((student) => (
+            <div
+              key={student.id}
+              className="flex items-center justify-between p-2 hover:bg-accent rounded-md cursor-pointer"
+              onClick={() => onPick(student)}
+            >
+              <span>{student.name}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -15,3 +15,11 @@ export const fakeDayRecords: CalendarDayRecord[] = [
     { date: new Date(year, month, day + 7), eventCount: 0, isWorkday: false },
     { date: new Date(year, month, day + 8), eventCount: 0, isWorkday: true }
 ];
+
+export interface CalendarEvent {
+  id: number;
+  date: Date;
+  studentId: number;
+  courseId: number;
+  isCanceled?: boolean;
+}
