@@ -53,6 +53,12 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
     ));
     setSelectedEvent(null);
   }
+
+  const handleEventDelete = async (eventId: number) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setEvents(events.filter(event => event.id !== eventId));
+    setSelectedEvent(null);
+  }
   
   return (
     <Card>
@@ -65,7 +71,7 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
           <CalendarEventCreatorDialog defaultDate={selectedDate} onSubmit={handleEventSubmit} />
         </CardTitle>
       </CardHeader>
-      
+
       <ScrollArea className="h-full h-[400px]">
         <ul id="course-list" className="space-y-1.5">
           {events.map((event, index) => (
@@ -87,6 +93,7 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
         <CalendarEventEditorDialog 
           event={selectedEvent} 
           onSubmit={handleEventUpdate}
+          onDelete={handleEventDelete}
           open={!!selectedEvent}
           onOpenChange={(open) => !open && setSelectedEvent(null)}
         />
