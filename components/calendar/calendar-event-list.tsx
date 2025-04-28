@@ -10,6 +10,7 @@ import { CalendarEvent, fakeEvents, fakeEventStudents } from "./type";
 import { useCourseStore } from "@/components/course/type";
 import CalendarEventCreatorDialog from "./calendar-event-creator-dialog";
 import CalendarEventEditorDialog from "./calendar-event-editor-dialog";
+import { ScrollArea } from "../ui/scroll-area";
 
 
 export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
@@ -64,7 +65,8 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
           <CalendarEventCreatorDialog defaultDate={selectedDate} onSubmit={handleEventSubmit} />
         </CardTitle>
       </CardHeader>
-      <CardContent className="max-h-[400px] overflow-y-auto scrollbar-thin px-4">
+      
+      <ScrollArea className="h-full h-[400px]">
         <ul id="course-list" className="space-y-1.5">
           {events.map((event, index) => (
             <li key={event.id.toString()}>
@@ -79,7 +81,8 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
             </li>
           ))}
         </ul>
-      </CardContent>
+      </ScrollArea>
+      
       {selectedEvent && (
         <CalendarEventEditorDialog 
           event={selectedEvent} 

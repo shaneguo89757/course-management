@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { EventStudent, fakeEventStudents } from "../type";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 
 
@@ -135,18 +136,21 @@ function StudentSearchContent({
           </p>
         )}
       </div>
-      {searchResults.length > 0 && (
-        <div className="max-h-40 overflow-y-auto space-y-1 border rounded-md">
-          {searchResults.map((student) => (
-            <div
-              key={student.id}
-              className="flex items-center justify-between p-2 hover:bg-accent rounded-md cursor-pointer"
-              onClick={() => onPick(student)}
-            >
-              <span>{student.name}</span>
-            </div>
-          ))}
-        </div>
+      
+      {hasInput && (
+        <ScrollArea className="h-[160px] rounded-md border">
+          <div className="pr-2 space-y-1">
+            {searchResults.map((student) => (
+              <div
+                key={student.id}
+                className="flex items-center justify-between p-2 hover:bg-accent rounded-md cursor-pointer"
+                onClick={() => onPick(student)}
+              >
+                <span>{student.name}</span>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
       )}
     </div>
   );
