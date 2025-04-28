@@ -66,7 +66,7 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
         <CardTitle className="text-lg font-bold select-none flex items-center justify-between">
           <div className="flex items-center gap-2">
             {selectedDate?formatDate(selectedDate, "yyyy-MM-dd"):"未選擇日期"}
-            <Badge variant="secondary" className="text-xs h-4 font-normal">7</Badge>
+            <Badge variant="secondary" className="text-xs h-4 font-normal">{events.length}</Badge>
           </div>
           <CalendarEventCreatorDialog defaultDate={selectedDate} onSubmit={handleEventSubmit} />
         </CardTitle>
