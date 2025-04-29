@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { zhTW } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -20,16 +20,13 @@ export interface CalendarGridProps {
 }
 
 export default function CalendarGrid({dayRecords, selectedDate, onSelectedDate, onMonthChange}: CalendarGridProps) {
-  const [today] = useState<number>(()=>parseInt(formatDate.yyyyMMdd(new Date())));
-
-  const [dayRecordsMap] = useState<Map<number, CalendarDayRecord>>(()=>{
+  const dayRecordsMap = useMemo(() => {
     const map = new Map<number, CalendarDayRecord>();
-    dayRecords.forEach(day => {
-      map.set(parseInt(formatDate.yyyyMMdd(day.date)), day);
-    });
+    dayRecords.forEach(day => map.set(parseInt(formatDate.yyyyMMdd(day.date)), day));
     return map;
-  });
+  }, [dayRecords]);
 
+  const today = parseInt(formatDate.yyyyMMdd(new Date()));
   const isBeforeThenToday = (date: Date) => parseInt(formatDate.yyyyMMdd(date)) < today;
 
   const getRecord = (date: Date) => dayRecordsMap.get(parseInt(formatDate.yyyyMMdd(date)));
