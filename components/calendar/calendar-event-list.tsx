@@ -85,11 +85,11 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
                   courseName={courseName}
                   categoryName={categoryName}
                   activeState={activeState}
-                onClick={() => setSelectedEvent(event)}
-              />
-              {index !== events.length - 1 && <Separator/>}
-            </li>
-          );
+                  onClick={() => setSelectedEvent(event)}
+                />
+                {index !== events.length - 1 && <Separator/>}
+              </li>
+            )
           })}
         </ul>
       </ScrollArea>
