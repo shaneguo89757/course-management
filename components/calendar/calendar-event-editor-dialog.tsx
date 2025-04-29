@@ -89,7 +89,7 @@ export default function CalendarEventEditorDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">編輯課堂行程</DialogTitle>
         </DialogHeader>

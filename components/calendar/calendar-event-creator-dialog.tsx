@@ -61,7 +61,7 @@ export default function CalendarEventCreatorDialog({ defaultDate, onSubmit }: { 
       <DialogTrigger asChild>
         <Button variant="outline" className="h-8">安排行程</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">安排行程</DialogTitle>
         </DialogHeader>
