@@ -23,7 +23,7 @@ function BadgeItem({item, selectedItemId, onItemSelect, disabled = false}:{item:
   )
 }
 
-export function CourseCategoryList({courseCategories, selectedCategoryId, onCategorySelect, editable = false}:{courseCategories:any[], selectedCategoryId:number|null, onCategorySelect:any, editable:boolean}) {
+export function CourseCategoryList({courseCategories, selectedCategoryId, onCategorySelect, editable = true}:{courseCategories:any[], selectedCategoryId:number|null, onCategorySelect:any, editable:boolean}) {
   return (
     <div className="course-category-list flex flex-wrap gap-2">
       {courseCategories.map((item, i) => (
@@ -33,7 +33,7 @@ export function CourseCategoryList({courseCategories, selectedCategoryId, onCate
   )
 }
 
-export function CourseList({courseItems, selectedCourseId, onCourseSelect, editable = false}:{courseItems:any[]|undefined, selectedCourseId:number|null, onCourseSelect:any, editable:boolean}) {
+export function CourseList({courseItems, selectedCourseId, onCourseSelect, editable = true}:{courseItems:any[]|undefined, selectedCourseId:number|null, onCourseSelect:any, editable:boolean}) {
   return (
       <div className="course-list-item-list flex flex-wrap gap-2">
         {courseItems && courseItems.map((item, i) => (
