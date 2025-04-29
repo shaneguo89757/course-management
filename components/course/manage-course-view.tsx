@@ -23,21 +23,21 @@ function BadgeItem({item, selectedItemId, onItemSelect, disabled = false}:{item:
   )
 }
 
-export function CourseCategoryList({courseCategories, selectedCategoryId, onCategorySelect, disabled = false}:{courseCategories:any[], selectedCategoryId:number|null, onCategorySelect:any, disabled:boolean}) {
+export function CourseCategoryList({courseCategories, selectedCategoryId, onCategorySelect, editable = false}:{courseCategories:any[], selectedCategoryId:number|null, onCategorySelect:any, editable:boolean}) {
   return (
     <div className="course-category-list flex flex-wrap gap-2">
       {courseCategories.map((item, i) => (
-        <BadgeItem key={i} item={item} selectedItemId={selectedCategoryId} onItemSelect={onCategorySelect} disabled={disabled} />
+        <BadgeItem key={i} item={item} selectedItemId={selectedCategoryId} onItemSelect={onCategorySelect} disabled={!editable} />
       ))}
     </div>
   )
 }
 
-export function CourseList({courseItems, selectedCourseId, onCourseSelect, disabled = false}:{courseItems:any[]|undefined, selectedCourseId:number|null, onCourseSelect:any, disabled:boolean}) {
+export function CourseList({courseItems, selectedCourseId, onCourseSelect, editable = false}:{courseItems:any[]|undefined, selectedCourseId:number|null, onCourseSelect:any, editable:boolean}) {
   return (
       <div className="course-list-item-list flex flex-wrap gap-2">
         {courseItems && courseItems.map((item, i) => (
-          <BadgeItem key={i} item={item} selectedItemId={selectedCourseId} onItemSelect={onCourseSelect} disabled={disabled} />
+          <BadgeItem key={i} item={item} selectedItemId={selectedCourseId} onItemSelect={onCourseSelect} disabled={!editable} />
         ))}
       </div>
   )
