@@ -22,18 +22,6 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
     setEvents(fakeEvents);
   }, [selectedDate]);
 
-  const getCourseName = (courseId: number) => {
-    return courses.find(course => course.id === courseId)?.name ?? "課程" + courseId;
-  }
-
-  const getCategoryName = (courseId: number) => {
-    return courseCategories.find(category => category.id === courseId)?.name ?? "分類" + courseId;
-  }
-
-  const getStudentName = (studentId: number) => {
-    return fakeEventStudents.find(student => student.id === studentId)?.name ?? "學生" + studentId;
-  }
-
   const handleEventSubmit = async (event: CalendarEvent) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -59,6 +47,20 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
     setEvents(events.filter(event => event.id !== eventId));
     setSelectedEvent(null);
   }
+
+  const handleEventItem = (event: CalendarEvent) => {
+    const student = fakeEventStudents.find(student => student.id === event.studentId);
+    const course = courses.find(course => course.id === event.courseId);
+    const category = courseCategories.find(category => category.id === course?.categoryId);
+    const activeState = !event.isCanceled;
+
+    return {
+      studentName: student?.name ?? "學生" + event.studentId,
+      courseName: course?.name ?? "課程" + event.courseId,
+      categoryName: category?.name ?? "分類" + course?.categoryId,
+      activeState: activeState
+    }; 
+  }
   
   return (
     <Card>
@@ -74,18 +76,21 @@ export default function ({ selectedDate }: { selectedDate: Date | undefined }) {
 
       <ScrollArea className="h-full h-[400px]">
         <ul id="course-list" className="space-y-1.5">
-          {events.map((event, index) => (
-            <li key={event.id.toString()}>
-              <EventItem 
-                name={getStudentName(event.studentId)}
-                courseName={getCourseName(event.courseId)}
-                categoryName={getCategoryName(event.courseId)}
-                activeState={!event.isCanceled}
-                onClick={() => setSelectedEvent(event)}
-              />
-              {index !== events.length - 1 && <Separator/>}
-            </li>
-          ))}
+          {events.map((event, index) => {
+            const {studentName, courseName, categoryName, activeState} = handleEventItem(event);
+            return (
+              <li key={event.id.toString()}>
+                <EventItem 
+                  name={studentName}
+                  courseName={courseName}
+                  categoryName={categoryName}
+                  activeState={activeState}
+                  onClick={() => setSelectedEvent(event)}
+                />
+                {index !== events.length - 1 && <Separator/>}
+              </li>
+            )
+          })}
         </ul>
       </ScrollArea>
       

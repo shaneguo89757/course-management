@@ -59,11 +59,11 @@ export default function CalendarEventCreatorDialog({ defaultDate, onSubmit }: { 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-8"> 安排學員</Button>
+        <Button variant="outline" className="h-8">安排行程</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">安排學員</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">安排行程</DialogTitle>
         </DialogHeader>
         
         {/* Body */}
@@ -77,7 +77,7 @@ export default function CalendarEventCreatorDialog({ defaultDate, onSubmit }: { 
         <DialogFooter className="flex justify-end gap-2">
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={handleCancel}>取消</Button>
-            <Button type="submit" disabled={disableToSave} onClick={handleConfirm} loading={isSaving}>確認</Button>
+            <Button type="submit" disabled={disableToSave} onClick={handleConfirm} loading={isSaving}>新增</Button>
           </div>
         </DialogFooter>
       </DialogContent>

@@ -10,11 +10,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export default function StudentInfoSection({
   initStudentId,
   onStudentSelectId,
-  disabled = false
+  editable = true
 }: {
   initStudentId: number | null;
   onStudentSelectId?: (id: number | null) => void;
-  disabled?: boolean;
+  editable?: boolean;
 }) {
   const [selectedStudent, setSelectedStudent] = useState<EventStudent | null>(fakeEventStudents.find(student => student.id === initStudentId) ?? null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -35,7 +35,7 @@ export default function StudentInfoSection({
   }, [searchQuery]);
 
   const handlePickSearchResult = (student: EventStudent) => {
-    if (disabled) {
+    if (!editable) {
       return;
     }
 
@@ -47,7 +47,7 @@ export default function StudentInfoSection({
   };
 
   const showSelectedStudent = selectedStudent != null && !isSwitching;
-  const openSearchView = !disabled && (isSwitching || !selectedStudent);
+  const openSearchView = editable && (isSwitching || !selectedStudent);
 
   return (
     <div>
@@ -61,7 +61,7 @@ export default function StudentInfoSection({
         <StudentInfoContent
           selectedStudent={selectedStudent}
           onSwitch={() => setIsSwitching(true)}
-          disabled={disabled}
+          editable={editable}
         />
       )}
       {openSearchView && (
@@ -78,11 +78,11 @@ export default function StudentInfoSection({
 function StudentInfoContent({
   selectedStudent,
   onSwitch,
-  disabled
+  editable
 }: {
   selectedStudent: EventStudent;
   onSwitch: () => void;
-  disabled: boolean;
+  editable: boolean;
 }) {
   return (
     <div className="space-y-2">
@@ -90,7 +90,7 @@ function StudentInfoContent({
         <span className="font-medium border-gray-600 border rounded-md px-2 py-1">
           {selectedStudent.name}
         </span>
-        {!disabled && (
+        {editable && (
           <Button variant="default" size="sm" onClick={onSwitch}>
             替換
           </Button>

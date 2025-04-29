@@ -6,11 +6,11 @@ import { CourseCategoryList, CourseList } from "@/components/course/manage-cours
 export default function CourseCategorySection({
   onCourseSelectId,
   initialCourseId,
-  disabled = false
+  editable = true
 }: {
   onCourseSelectId: (id: number | null) => void;
   initialCourseId?: number | null;
-  disabled?: boolean;
+  editable?: boolean;
 }) {
   // 課程分類
   const { courses, courseCategories } = useCourseStore();
@@ -27,6 +27,8 @@ export default function CourseCategorySection({
     if (item.id == selectedCategoryId) return;
 
     setSelectedCategoryId(item.id);
+    setSelectedCourseId(null);
+    onCourseSelectId(null);
   };
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function CourseCategorySection({
           courseCategories={courseCategories}
           selectedCategoryId={selectedCategoryId}
           onCategorySelect={handleCategorySelect}
-          disabled={disabled}
+          editable={editable}
         />
       </div>
 
@@ -67,7 +69,7 @@ export default function CourseCategorySection({
           }
           selectedCourseId={selectedCourseId}
           onCourseSelect={handleCourseSelect}
-          disabled={disabled}
+          editable={editable}
         />
       </div>
     </div>

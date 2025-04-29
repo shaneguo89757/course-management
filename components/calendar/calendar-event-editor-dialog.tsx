@@ -89,7 +89,7 @@ export default function CalendarEventEditorDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">編輯課堂行程</DialogTitle>
         </DialogHeader>
@@ -97,8 +97,8 @@ export default function CalendarEventEditorDialog({
         {/* Body */}
         <div className="grid gap-4 py-4">
           <EventDateSection selectedDate={selectedDate} />
-          <StudentInfoSection initStudentId={selectedStudentId} onStudentSelectId={setSelectedStudentId} disabled={true}/>
-          <CourseCategorySection initialCourseId={selectedCourseId} onCourseSelectId={setSelectedCourseId} disabled={true}/>
+          <StudentInfoSection initStudentId={selectedStudentId} onStudentSelectId={setSelectedStudentId} editable={false}/>
+          <CourseCategorySection initialCourseId={selectedCourseId} onCourseSelectId={setSelectedCourseId}/>
         </div>
         
         {/* Footer */}
@@ -135,7 +135,7 @@ export function DeleteAlertDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction className="bg-red-500 hover:bg-red-400" onClick={onDelete}>確認</AlertDialogAction>
+          <AlertDialogAction className="bg-red-500 hover:bg-red-400" onClick={onDelete}>修改</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
